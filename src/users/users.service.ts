@@ -7,9 +7,9 @@ export class UsersService {
   constructor(private readonly db: DatabaseService) {}
 
   async create(createUser: Prisma.userinfoCreateInput) {
-    const user = this.findOneByNationalNumber(createUser.nationalNumber);
+    const user = await this.findOneByNationalNumber(createUser.nationalNumber);
     if (user !== null) {
-      return new ConflictException('User with this national number already exists');
+      throw new ConflictException('User with this national number already exists');
     }
     return this.db.userinfo.create({
       data: createUser,
@@ -33,6 +33,9 @@ export class UsersService {
   }
 
   async update(id: number, updateUser: Prisma.userinfoUpdateInput) {
+    const user = await this.findOne(id);
+    if(!user)
+      throw new NotFoundException();
     return this.db.userinfo.update({
       where: { id },
       data: updateUser,

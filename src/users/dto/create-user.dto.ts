@@ -27,8 +27,9 @@ export class CreateUserDto {
     @IsNotEmpty()
     email: string;
     @IsString()
-    @IsNotEmpty()
+    @IsNotEmpty({message: 'National number is required'})
     nationalNumber: string;
+    nationalCard: string;
     @IsEnum(['admin', 'tehranUni', 'otherUni', 'free', 'employee'])
     @IsNotEmpty()
     type: 'admin'|'tehranUni'|'otherUni'|'free'|'employee';

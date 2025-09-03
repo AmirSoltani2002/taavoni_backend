@@ -25,6 +25,7 @@ model userinfo {
   workPhone String
   email String
   nationalNumber String @unique
+  nationalCard  String
   type  TYPE
   isargaryPercent  ISARGARIPERCENT?
   azadeEsaratMonths Int?
