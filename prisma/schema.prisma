@@ -23,10 +23,11 @@ model userinfo {
   homePhone String
   mobile String
   workPhone String
-  email String
+  email String @unique
   nationalNumber String @unique
   nationalCard  String
   type  TYPE
+  password String
   isargaryPercent  ISARGARIPERCENT?
   azadeEsaratMonths Int?
   azadeMonths Int?

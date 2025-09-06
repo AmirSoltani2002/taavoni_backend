@@ -7,9 +7,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,               // remove extra properties
-      forbidNonWhitelisted: true,    // throw error for unknown fields
-      transform: true,               // transform payloads to DTO instances
+      whitelist: true, // remove extra properties
+      forbidNonWhitelisted: true, // throw error for unknown fields
+      transform: true, // transform payloads to DTO instances
       transformOptions: { enableImplicitConversion: true },
     }),
   );
