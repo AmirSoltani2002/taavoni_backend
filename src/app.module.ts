@@ -4,10 +4,18 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/auth.guard';
 
 @Module({
-  imports: [UsersModule, DatabaseModule, AuthModule],
+  imports: [UsersModule, DatabaseModule, AuthModule, ConfigModule.forRoot({isGlobal: true,})],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}

@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { TYPE, ISARGARIPERCENT, SEX, SHAHEDRELATION } from '@prisma/client';
 import {
   IsString,
   IsEnum,
@@ -16,9 +18,9 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty({ message: 'Last name is required' })
   lastName: string;
-  @IsEnum(['male', 'female'])
+  @IsEnum(SEX)
   @IsNotEmpty()
-  sex: 'male' | 'female';
+  sex: SEX;
   @IsDate()
   @IsNotEmpty()
   birthDay: Date;
@@ -40,16 +42,18 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty({ message: 'National number is required' })
   nationalNumber: string;
+  @IsOptional()
+  @ApiProperty({ type: 'string', format: 'binary', required: true })
   nationalCard: string;
-  @IsEnum(['admin', 'tehranUni', 'otherUni', 'free', 'employee'])
+  @IsEnum(TYPE)
   @IsNotEmpty()
-  type: 'admin' | 'tehranUni' | 'otherUni' | 'free' | 'employee';
+  type: TYPE;
   @IsString()
   @IsStrongPassword()
   password: string;
-  @IsEnum(['val10_15', 'val15_20', 'val20_plus'])
+  @IsEnum([])
   @IsOptional()
-  isargaryPercent?: 'val10_15' | 'val15_20' | 'val20_plus';
+  isargaryPercent?: ISARGARIPERCENT;
   @IsNumber()
   @IsOptional()
   @Min(0)
@@ -62,7 +66,7 @@ export class CreateUserDto {
   @IsOptional()
   @Min(0)
   shahedFamilyNumber?: number;
-  @IsEnum(['azade_wife', 'azade_child', 'jan_wife', 'jan_child'])
+  @IsEnum([SHAHEDRELATION])
   @IsOptional()
-  shahedRelation?: 'azade_wife' | 'azade_child' | 'jan_wife' | 'jan_child';
+  shahedRelation?: SHAHEDRELATION;
 }

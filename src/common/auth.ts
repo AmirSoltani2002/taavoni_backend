@@ -1,13 +1,13 @@
 import * as bcrypt from 'bcrypt';
 
 export class PasswordService {
-  private readonly saltRounds = 10; // The higher, the more secure but slower
+  private static readonly saltRounds = 10; // The higher, the more secure but slower
 
   static async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, this.saltRounds);
   }
 
   static async compare(userPassword, inputPassword) {
-    return await bcrypt.compare(userPassword, inputPassword)
+    return await bcrypt.compare(inputPassword, userPassword)
   }
 }

@@ -43,6 +43,7 @@ enum SEX {
 }
 
 enum TYPE {
+  system
   admin
   tehranUni
   otherUni

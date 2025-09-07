@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { PasswordService } from 'src/common/auth';
 import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
@@ -11,10 +12,11 @@ export class UsersService {
   constructor(private readonly db: DatabaseService) {}
 
   async create(createUser: Prisma.userinfoCreateInput) {
-    const user = await this.findOneByNationalNumber(createUser.nationalNumber);
-    if (user !== null) {
+    const userNational = await this.findOneByNationalNumber(createUser.nationalNumber);
+    const userEmail = await this.findOneByEmail(createUser.email);
+    if (userEmail !== null || userNational !== null) {
       throw new ConflictException(
-        'User with this national number already exists',
+        'User with this nationalNumber or Email already exists',
       );
     }
     return this.db.userinfo.create({
