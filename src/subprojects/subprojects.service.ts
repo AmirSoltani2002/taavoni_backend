@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubprojectDto } from './dto/create-subproject.dto';
 import { UpdateSubprojectDto } from './dto/update-subproject.dto';
 import { Prisma } from '@prisma/client';
@@ -8,8 +8,9 @@ import { DatabaseService } from 'src/database/database.service';
 export class SubprojectsService {
   constructor(private readonly db: DatabaseService) {}
   
-  create(createSubproject: CreateSubprojectDto) {
-    return this.db.subProject.create({
+  async create(createSubproject: CreateSubprojectDto) {
+    try{
+      return await this.db.subProject.create({
       data: {
         area: createSubproject.area,
         floor: createSubproject.floor,
@@ -18,18 +19,14 @@ export class SubprojectsService {
         user: createSubproject?.userId ? {connect: {id: createSubproject.userId}} : undefined,
       }
     })
+    } catch(error){
+      if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025')
+        throw new NotFoundException();
+    }
   }
 
   findAll() {
     return this.db.subProject.findMany()
-  }
-
-  findAllMy(userId: number) {
-    this.db.subProject.findMany({
-      where: {
-        userId: userId,
-      }
-    })
   }
 
   findAvailable() {
@@ -41,14 +38,29 @@ export class SubprojectsService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} subproject`;
+    try {
+      return this.db.subProject.findUniqueOrThrow({
+        where: {
+          id: id,
+        }
+      })
+    } catch(_error) {
+      throw new NotFoundException();
+    }
   }
 
-  update(id: number, updateSubproject: Prisma.subProjectUpdateInput) {
-    return `This action updates a #${id} subproject`;
+  async update(id: number, updateSubproject: Prisma.subProjectUpdateInput) {
+    const record = await this.findOne(id);
+    return this.db.subProject.update({
+      where: {id},
+      data: updateSubproject,
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} subproject`;
+  async remove(id: number) {
+    const record = await this.findOne(id);
+    return this.db.subProject.delete({
+      where: {id},
+    })
   }
 }

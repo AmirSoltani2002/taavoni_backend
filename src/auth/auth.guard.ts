@@ -13,7 +13,7 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const publicDec = this.reflector.getAllAndOverride(Public, [
         context.getHandler(),
-        context.getClass()
+        context.getClass(),
     ])
     if(publicDec)
         return true
@@ -58,3 +58,21 @@ export class RolesGuard implements CanActivate {
     return requiredRoles.includes(user?.type); // check if user's role matches
   }
 }
+
+@Injectable()
+export class GlobalGuard implements CanActivate {
+  constructor(
+    private readonly authGuard: AuthGuard,
+    private readonly rolesGuard: RolesGuard,
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Run AuthGuard first
+    const authResult = await this.authGuard.canActivate(context);
+    if (!authResult) return false;
+
+    // Then run RolesGuard
+    return this.rolesGuard.canActivate(context);
+  }
+}
+

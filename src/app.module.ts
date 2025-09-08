@@ -6,7 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard, RolesGuard } from './auth/auth.guard';
+import { GlobalGuard } from './auth/auth.guard';
 import { ProjectsModule } from './projects/projects.module';
 import { SubprojectsModule } from './subprojects/subprojects.module';
 
@@ -16,11 +16,7 @@ import { SubprojectsModule } from './subprojects/subprojects.module';
   providers: [AppService,
     {
       provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
+      useClass: GlobalGuard,
     },
   ],
 })

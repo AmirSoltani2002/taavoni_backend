@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class ProjectsService {
+  constructor(private readonly db: DatabaseService){}
+
   create(createProjectDto: CreateProjectDto) {
-    return 'This action adds a new project';
+    return this.db.project.create({
+      data: createProjectDto
+    })
   }
 
   findAll() {
-    return `This action returns all projects`;
+    return this.db.project.findMany({
+      include: {subProjects: true}
+    })
+  }
+
+  findAvailable() {
+    return this.db.project.findMany({
+      where: {
+        subProjects:{
+          some: {
+            userId: null
+          }
+        }
+      },
+      include: {
+        subProjects: true
+      }
+    })
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} project`;
+    try {
+      return this.db.project.findUniqueOrThrow({
+        where: {
+          id: id,
+        }
+      })
+    } catch(_error) {
+      throw new NotFoundException();
+    }
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  async update(id: number, updateProjectDto: UpdateProjectDto) {
+    const record = await this.findOne(id);
+    return this.db.project.update({
+      where: {id},
+      data: updateProjectDto,
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  async remove(id: number) {
+    const record = await this.findOne(id);
+    return this.db.project.delete({
+      where: {id},
+    })
   }
 }

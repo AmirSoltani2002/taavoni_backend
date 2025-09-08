@@ -8,7 +8,7 @@ import { Roles } from 'src/auth/roles.decorator';
 export class SubprojectsController {
   constructor(private readonly subprojectsService: SubprojectsService) {}
 
-  @Roles(['admin'])
+  @Roles(['admin', 'system'])
   @Post()
   create(@Body() createSubprojectDto: CreateSubprojectDto) {
     return this.subprojectsService.create(createSubprojectDto);
@@ -18,12 +18,6 @@ export class SubprojectsController {
   @Get('all')
   findAll() {
     return this.subprojectsService.findAll();
-  }
-
-  @Get('my')
-  findAllMy(@Request() req) {
-    const userId = Number(req['user'].id) as number
-    return this.subprojectsService.findAllMy(userId)
   }
 
   @Get('available')
