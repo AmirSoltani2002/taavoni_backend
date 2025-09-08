@@ -61,7 +61,7 @@ export class UsersController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     //if (!file) throw new BadRequestException('National card file is required');
-    createUserDto.nationalCard = `/uploads/nationalCards/${file.filename}`;
+    createUserDto.nationalCard = `/uploads/nationalCards/${file?.filename}`;
     createUserDto.password = await PasswordService.hashPassword(createUserDto.password)
     return this.usersService.create(createUserDto);
   }
