@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PasswordService } from 'src/common/auth';
 import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
@@ -25,24 +24,29 @@ export class UsersService {
   }
 
   async findAll() {
-    return this.db.userinfo.findMany();
+    return this.db.userinfo.findMany({
+      include: {subProjects: true}
+    });
   }
 
   async findOne(id: number) {
     return this.db.userinfo.findUnique({
       where: { id },
+      include: {subProjects: true}
     });
   }
 
   async findOneByNationalNumber(nationalNumber: string) {
     return this.db.userinfo.findUnique({
       where: { nationalNumber },
+      include: {subProjects: true}
     });
   }
 
   async findOneByEmail(email: string) {
     return this.db.userinfo.findUnique({
       where: { email },
+      include: {subProjects: true}
     });
   }
 

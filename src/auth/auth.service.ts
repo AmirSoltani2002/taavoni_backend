@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { userinfo } from '@prisma/client';
-import { PasswordService } from 'src/common/auth';
+import { PasswordService } from 'src/auth/config';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 

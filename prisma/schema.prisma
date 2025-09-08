@@ -28,11 +28,38 @@ model userinfo {
   nationalCard  String
   type  TYPE
   password String
+  subProjects subProject[]
   isargaryPercent  ISARGARIPERCENT?
   azadeEsaratMonths Int?
   azadeMonths Int?
   shahedFamilyNumber Int?
   shahedRelation SHAHEDRELATION?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model project {
+  id  Int @id @default(autoincrement())
+  name  String
+  address String
+  sharedArea  Int
+  options String?
+  startDate DateTime
+  endDate DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  subProjects subProject[]
+}
+
+model subProject {
+  id  Int @id @default(autoincrement())
+  area  Int
+  floor Int
+  point  Int
+  user userinfo? @relation(fields: [userId], references: [id])
+  userId  Int?
+  project project @relation(fields: [projectId], references: [id])
+  projectId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

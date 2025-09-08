@@ -1,7 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthEmailDto, AuthNationalDto } from './dto/auth.dto';
+import { Public } from './roles.decorator';
 
+@Public(true)
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
