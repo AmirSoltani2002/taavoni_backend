@@ -58,7 +58,7 @@ export class UsersController {
   )
   async create(
     @Body() createUserDto: CreateUserDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
     //if (!file) throw new BadRequestException('National card file is required');
     createUserDto.nationalCard = `/uploads/nationalCards/${file.filename}`;
