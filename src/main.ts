@@ -13,6 +13,11 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+  app.enableCors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true, // allow cookies or auth headers
+  });
   const config = new DocumentBuilder()
     .setTitle('UserInfo API')
     .setDescription('Backend service API documentation')
