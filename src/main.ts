@@ -20,7 +20,7 @@ async function bootstrap() {
     credentials: true, // allow cookies or auth headers
   });
   const config = new DocumentBuilder()
-    .setTitle('UserInfo API')
+    .setTitle('UserInfo APIs')
     .setDescription('Backend service API documentation')
     .setVersion('1.0')
     .build();
