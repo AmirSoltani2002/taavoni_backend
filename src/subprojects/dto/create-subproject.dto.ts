@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional } from "class-validator"
+import { IsNumber, IsOptional, IsString } from "class-validator"
 
 export class CreateSubprojectDto {
     @IsNumber()
@@ -7,6 +7,13 @@ export class CreateSubprojectDto {
     floor: number
     @IsNumber()
     point: number
+    @IsNumber()
+    block: number
+    @IsNumber()
+    roomCount: number
+    @IsString()
+    @IsOptional()
+    options?: string
     @IsNumber()
     @IsOptional()
     userId?: number

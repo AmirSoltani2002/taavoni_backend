@@ -42,9 +42,6 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty({ message: 'National number is required' })
   nationalNumber: string;
-  @IsOptional()
-  @ApiProperty({ type: 'string', format: 'binary', required: true })
-  nationalCard: string;
   @IsEnum(TYPE)
   @IsNotEmpty()
   type: TYPE;

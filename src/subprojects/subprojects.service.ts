@@ -9,31 +9,26 @@ export class SubprojectsService {
   constructor(private readonly db: DatabaseService) {}
   
   async create(createSubproject: CreateSubprojectDto) {
-    try{
-      return await this.db.subProject.create({
+    return await this.db.subProject.create({
       data: {
         area: createSubproject.area,
         floor: createSubproject.floor,
         point: createSubproject.point,
+        block: createSubproject.block,
+        roomCount: createSubproject.roomCount,
         project: {connect: {id: createSubproject.projectId}},
         user: createSubproject?.userId ? {connect: {id: createSubproject.userId}} : undefined,
       }
     })
-    } catch(error){
-      if(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025')
-        throw new NotFoundException();
-    }
   }
 
   findAll() {
     return this.db.subProject.findMany()
   }
 
-  findAvailable() {
+  findAllByUser(id: number) {
     return this.db.subProject.findMany({
-      where: {
-        user: null
-      }
+      where: {userId: id}
     })
   }
 
@@ -49,7 +44,7 @@ export class SubprojectsService {
     }
   }
 
-  async update(id: number, updateSubproject: Prisma.subProjectUpdateInput) {
+  async update(id: number, updateSubproject: UpdateSubprojectDto) {
     const record = await this.findOne(id);
     return this.db.subProject.update({
       where: {id},

@@ -20,9 +20,15 @@ export class SubprojectsController {
     return this.subprojectsService.findAll();
   }
 
-  @Get('available')
-  findAvailable() {
-    return this.subprojectsService.findAvailable();
+  @Roles(['admin', 'system'])
+  @Get('user/:id') 
+  findAllByUser(@Param('id') id: number){
+    return this.subprojectsService.findAllByUser(+id)
+  }
+
+  @Get('profile') 
+  findMy(@Request() req){
+    return this.subprojectsService.findAllByUser(req['user'].id)
   }
 
   @Get(':id')

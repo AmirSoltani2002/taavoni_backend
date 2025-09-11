@@ -25,9 +25,9 @@ model userinfo {
   workPhone String
   email String @unique
   nationalNumber String @unique
-  nationalCard  String
   type  TYPE
   password String
+  userDocs userDoc[]
   subProjects subProject[]
   isargaryPercent  ISARGARIPERCENT?
   azadeEsaratMonths Int?
@@ -38,11 +38,26 @@ model userinfo {
   updatedAt DateTime @updatedAt
 }
 
+model userDoc {
+  id  Int @id @default(autoincrement())
+  user  userinfo @relation(fields: [userId], references: [id])
+  userId  Int
+  documet String
+  detail String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model project {
   id  Int @id @default(autoincrement())
   name  String
   address String
   sharedArea  Int
+  floorCount Int
+  unitCount Int
+  landArea  Int
+  buildingArea  Int
+  blockNumber Int
   options String?
   startDate DateTime
   endDate DateTime?
@@ -56,6 +71,9 @@ model subProject {
   area  Int
   floor Int
   point  Int
+  block Int
+  roomCount Int
+  options String?
   user userinfo? @relation(fields: [userId], references: [id])
   userId  Int?
   project project @relation(fields: [projectId], references: [id])

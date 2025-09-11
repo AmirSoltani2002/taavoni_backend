@@ -14,9 +14,7 @@ export class UsersService {
     const userNational = await this.findOneByNationalNumber(createUser.nationalNumber);
     const userEmail = await this.findOneByEmail(createUser.email);
     if (userEmail !== null || userNational !== null) {
-      throw new ConflictException(
-        'User with this nationalNumber or Email already exists',
-      );
+      throw new ConflictException();
     }
     return this.db.userinfo.create({
       data: createUser,
@@ -24,29 +22,24 @@ export class UsersService {
   }
 
   async findAll() {
-    return this.db.userinfo.findMany({
-      include: {subProjects: true}
-    });
+    return this.db.userinfo.findMany();
   }
 
   async findOne(id: number) {
     return this.db.userinfo.findUnique({
       where: { id },
-      include: {subProjects: true}
     });
   }
 
   async findOneByNationalNumber(nationalNumber: string) {
     return this.db.userinfo.findUnique({
       where: { nationalNumber },
-      include: {subProjects: true}
     });
   }
 
   async findOneByEmail(email: string) {
     return this.db.userinfo.findUnique({
       where: { email },
-      include: {subProjects: true}
     });
   }
 

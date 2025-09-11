@@ -7,6 +7,16 @@ export class CreateProjectDto {
     address: string;
     @IsNumber()
     sharedArea: number;
+    @IsNumber()
+    floorCount: number;
+    @IsNumber()
+    unitCount: number;
+    @IsNumber()
+    landArea: number;
+    @IsNumber()
+    buildingArea: number;
+    @IsNumber()
+    blockNumber: number;
     @IsOptional()
     @IsString()
     options?: string;
