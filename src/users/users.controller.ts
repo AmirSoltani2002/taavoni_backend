@@ -6,22 +6,15 @@ import {
   Patch,
   Param,
   Delete,
-  UploadedFile,
-  UseInterceptors,
-  BadRequestException,
   Request,
   UnauthorizedException,
   NotFoundException,
 } from '@nestjs/common';
 import { PasswordService } from 'src/auth/config';
-import { ApiConsumes } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Public, Roles } from 'src/auth/roles.decorator';
-import { NotFoundError } from 'rxjs';
 
 @Controller('users')
 export class UsersController {
@@ -29,10 +22,7 @@ export class UsersController {
 
   @Public(true)
   @Post()
-  @ApiConsumes('multipart/form-data')
-  async create(
-    @Body() createUserDto: CreateUserDto,
-  ) {
+  async create(@Body() createUserDto: CreateUserDto) {
     //if (!file) throw new BadRequestException('National card file is required');
     createUserDto.password = await PasswordService.hashPassword(createUserDto.password)
     return this.usersService.create(createUserDto);
@@ -100,7 +90,7 @@ export class UsersController {
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const {password, ..._rest} = updateUserDto;
     if(password){
-      updateUserDto.password = await PasswordService.hashPassword(password)
+      updateUserDto.password = await PasswordService.hashPassword(password);
     }
     return this.usersService.update(+id, updateUserDto);
   }
