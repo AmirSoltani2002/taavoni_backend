@@ -48,7 +48,7 @@ export class CreateUserDto {
   @IsString()
   @IsStrongPassword()
   password: string;
-  @IsEnum([])
+  @IsEnum(ISARGARIPERCENT)
   @IsOptional()
   isargaryPercent?: ISARGARIPERCENT;
   @IsNumber()
@@ -63,7 +63,7 @@ export class CreateUserDto {
   @IsOptional()
   @Min(0)
   shahedFamilyNumber?: number;
-  @IsEnum([SHAHEDRELATION])
+  @IsEnum(SHAHEDRELATION)
   @IsOptional()
   shahedRelation?: SHAHEDRELATION;
 }
