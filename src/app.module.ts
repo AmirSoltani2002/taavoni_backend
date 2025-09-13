@@ -10,9 +10,10 @@ import { GlobalGuard } from './auth/auth.guard';
 import { ProjectsModule } from './projects/projects.module';
 import { SubprojectsModule } from './subprojects/subprojects.module';
 import { UserDocModule } from './user-doc/user-doc.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
-  imports: [UsersModule, DatabaseModule, AuthModule, ConfigModule.forRoot({isGlobal: true,}), ProjectsModule, SubprojectsModule, UserDocModule],
+  imports: [UsersModule, DatabaseModule, AuthModule, ConfigModule.forRoot({isGlobal: true,}), ProjectsModule, SubprojectsModule, UserDocModule, PostsModule],
   controllers: [AppController],
   providers: [AppService,
     {
