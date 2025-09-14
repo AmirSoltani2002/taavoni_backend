@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { SubprojectsService } from './subprojects.service';
 import { CreateSubprojectDto } from './dto/create-subproject.dto';
 import { UpdateSubprojectDto } from './dto/update-subproject.dto';
@@ -37,7 +37,7 @@ export class SubprojectsController {
   }
 
   @Roles(['admin', 'system'])
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateSubprojectDto: UpdateSubprojectDto) {
     return this.subprojectsService.update(+id, updateSubprojectDto);
   }

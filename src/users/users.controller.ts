@@ -3,12 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   Request,
   UnauthorizedException,
   NotFoundException,
+  Put,
 } from '@nestjs/common';
 import { PasswordService } from 'src/auth/config';
 import { UsersService } from './users.service';
@@ -40,7 +41,7 @@ export class UsersController {
     return rest;
   }
 
-  @Patch('profile')
+  @Put('profile')
   async updateProfile(@Body() updateUserDto: UpdateUserDto, @Request() req) {
     const {password, ..._rest} = updateUserDto;
     if(updateUserDto?.type && !['admin', 'system'].includes(req['user'].type) && ['admin', 'system'].includes(updateUserDto.type)){
@@ -86,7 +87,7 @@ export class UsersController {
   }
 
   @Roles(['admin', 'system'])
-  @Patch(':id')
+  @Put(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const {password, ..._rest} = updateUserDto;
     if(password){

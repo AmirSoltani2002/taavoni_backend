@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseInterceptors, BadRequestException, UploadedFile, Query} from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Request, UseInterceptors, BadRequestException, UploadedFile, Query} from '@nestjs/common';
 import { UserDocService } from './user-doc.service';
 import { CreateUserDocDto } from './dto/create-user-doc.dto';
 import { UpdateUserDocDto } from './dto/update-user-doc.dto';
@@ -70,7 +70,7 @@ export class UserDocController {
       }),
   )
   @Roles(['admin', 'system'])
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDocDto: UpdateUserDocDto, @UploadedFile() file?: Express.Multer.File) {
     if(file){
       updateUserDocDto.documet = `/uploads/${file?.filename}`;
@@ -104,7 +104,7 @@ export class UserDocController {
         },
       }),
   )
-  @Patch('profile')
+  @Put('profile')
   updateMy(
     detail: string,
     @Body() updateUserDocDto: UpdateUserDocDto,
