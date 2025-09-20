@@ -8,7 +8,7 @@ import {
   Request,
   UnauthorizedException,
   NotFoundException,
-  Put,
+  Patch,
 } from '@nestjs/common';
 import { PasswordService } from 'src/auth/config';
 import { UsersService } from './users.service';
@@ -24,6 +24,10 @@ export class UsersController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     //if (!file) throw new BadRequestException('National card file is required');
+    const {accepted, ..._rest} = createUserDto;
+    if(accepted !== undefined){
+      throw new UnauthorizedException();
+    }
     createUserDto.password = await PasswordService.hashPassword(createUserDto.password)
     return this.usersService.create(createUserDto);
   }
@@ -40,10 +44,10 @@ export class UsersController {
     return rest;
   }
 
-  @Put('profile')
+  @Patch('profile')
   async updateProfile(@Body() updateUserDto: UpdateUserDto, @Request() req) {
     const {password, ..._rest} = updateUserDto;
-    if(updateUserDto?.type && !['admin', 'system'].includes(req['user'].type) && ['admin', 'system'].includes(updateUserDto.type)){
+    if(updateUserDto?.type && !['admin', 'system'].includes(req['user'].type) && ['admin', 'system'].includes(updateUserDto.type) || updateUserDto?.accepted !== undefined  ){
       throw new UnauthorizedException();
     }
     if(password){
@@ -86,7 +90,7 @@ export class UsersController {
   }
 
   @Roles(['admin', 'system'])
-  @Put(':id')
+  @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const {password, ..._rest} = updateUserDto;
     if(password){

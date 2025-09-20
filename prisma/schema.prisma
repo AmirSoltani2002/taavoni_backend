@@ -29,11 +29,17 @@ model userinfo {
   password String
   userDocs userDoc[]
   subProjects subProject[]
+  subProjectTickets subProjectTicket[]
+  subProjectChat subProjectChat[]
+  otherChats otherChat[]
+  otherTicketsReciever otherTicket[] @relation("recieverRelation")
+  otherTicketsUser otherTicket[] @relation("userRelation")
   isargaryPercent  ISARGARIPERCENT?
   azadeEsaratMonths Int?
   azadeMonths Int?
   shahedFamilyNumber Int?
   shahedRelation SHAHEDRELATION?
+  accepted  Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -78,6 +84,7 @@ model subProject {
   userId  Int?
   project project @relation(fields: [projectId], references: [id])
   posts post[]
+  subProjectTickets subProjectTicket[]
   projectId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -91,6 +98,57 @@ model post {
   available Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model subProjectTicket {
+  id  Int @id @default(autoincrement())
+  subProject subProject @relation(fields: [subProjectId], references: [id])
+  subProjectId Int
+  user userinfo @relation(fields: [userId], references: [id])
+  userId  Int
+  type subProjectTicketType
+  chats subProjectChat[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model subProjectChat {
+  id  Int @id @default(autoincrement())
+  ticket subProjectTicket @relation(fields: [ticketId], references: [id])
+  ticketId Int
+  sender userinfo @relation(fields: [senderId], references: [id])
+  senderId Int
+  message String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model otherChat {
+  id  Int @id @default(autoincrement())
+  ticket otherTicket @relation(fields: [ticketId], references: [id])
+  ticketId Int
+  sender userinfo @relation(fields: [senderId], references: [id])
+  senderId Int
+  message String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model otherTicket {
+  id  Int @id @default(autoincrement())
+  user userinfo @relation("userRelation", fields: [userId], references: [id])
+  userId  Int
+  reciever userinfo @relation("recieverRelation", fields: [recieverId], references: [id])
+  recieverId Int
+  type String
+  chats otherChat[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum subProjectTicketType {
+  buy
+  sell
 }
 
 enum SEX {

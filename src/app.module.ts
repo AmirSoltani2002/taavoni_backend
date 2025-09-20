@@ -11,9 +11,13 @@ import { ProjectsModule } from './projects/projects.module';
 import { SubprojectsModule } from './subprojects/subprojects.module';
 import { UserDocModule } from './user-doc/user-doc.module';
 import { PostsModule } from './posts/posts.module';
+import { SubProjectTicketsModule } from './sub-project-tickets/sub-project-tickets.module';
+import { OtherTicketsModule } from './other-tickets/other-tickets.module';
+import { OtherChatsModule } from './other-chats/other-chats.module';
+import { SubprojectChatsModule } from './subproject-chats/subproject-chats.module';
 
 @Module({
-  imports: [UsersModule, DatabaseModule, AuthModule, ConfigModule.forRoot({isGlobal: true,}), ProjectsModule, SubprojectsModule, UserDocModule, PostsModule],
+  imports: [UsersModule, DatabaseModule, AuthModule, ConfigModule.forRoot({isGlobal: true,}), ProjectsModule, SubprojectsModule, UserDocModule, PostsModule, SubProjectTicketsModule, OtherTicketsModule, OtherChatsModule, SubprojectChatsModule],
   controllers: [AppController],
   providers: [AppService,
     {

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
 import { SubprojectsService } from './subprojects.service';
 import { CreateSubprojectDto } from './dto/create-subproject.dto';
 import { UpdateSubprojectDto } from './dto/update-subproject.dto';
@@ -15,13 +15,21 @@ export class SubprojectsController {
   }
 
   @Roles(['admin', 'system'])
+  @Post('multiple')
+  async createMany(@Body() createSubprojectDto: CreateSubprojectDto[]) {
+    await Promise.all(
+      createSubprojectDto.map(data => this.subprojectsService.create(data))
+    );
+  }
+
+  @Roles(['admin', 'system'])
   @Get('all')
   findAll() {
     return this.subprojectsService.findAll();
   }
 
   @Roles(['admin', 'system'])
-  @Get('user/:id') 
+  @Get('user/:id')
   findAllByUser(@Param('id') id: number){
     return this.subprojectsService.findAllByUser(+id)
   }
@@ -37,7 +45,7 @@ export class SubprojectsController {
   }
 
   @Roles(['admin', 'system'])
-  @Put(':id')
+  @Patch(':id')
   update(@Param('id') id: string, @Body() updateSubprojectDto: UpdateSubprojectDto) {
     return this.subprojectsService.update(+id, updateSubprojectDto);
   }

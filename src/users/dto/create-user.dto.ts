@@ -11,6 +11,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsStrongPassword,
+  IsBoolean,
 } from 'class-validator';
 export class CreateUserDto {
   @IsString()
@@ -66,4 +67,7 @@ export class CreateUserDto {
   @IsEnum(SHAHEDRELATION)
   @IsOptional()
   shahedRelation?: SHAHEDRELATION;
+  @IsBoolean()
+  @IsOptional()
+  accepted?: boolean;
 }
