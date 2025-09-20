@@ -9,7 +9,12 @@ export class SubProjectTicketsService {
   constructor(private readonly db: DatabaseService) {}
 
     create(createSubProjectTicketDto: CreateSubProjectTicketDto) {
-      return this.db.subProjectTicket.create({ data: createSubProjectTicketDto });
+      const {userId, subProjectId, ...rest} = createSubProjectTicketDto;
+      return this.db.subProjectTicket.create({ data: {
+        ...rest,
+        user: { connect: { id: userId } },
+        subProject: { connect: { id: subProjectId } }
+      } });
     }
   
     findAll(queryType?: string) {
@@ -23,7 +28,12 @@ export class SubProjectTicketsService {
     }
   
     update(id: number, updateSubProjectTicketDto: UpdateSubProjectTicketDto) {
-      return this.db.subProjectTicket.update({ where: { id }, data: updateSubProjectTicketDto });
+      const {userId, subProjectId, ...rest} = updateSubProjectTicketDto;
+      return this.db.subProjectTicket.update({ where: { id }, data: {
+        ...rest,
+        user: userId ? { connect: { id: userId } } : undefined,
+        subProject: subProjectId ? { connect: { id: subProjectId } } : undefined
+      } });
     }
   
     remove(id: number) {

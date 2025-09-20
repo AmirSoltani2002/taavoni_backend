@@ -9,15 +9,12 @@ export class SubprojectsService {
   constructor(private readonly db: DatabaseService) {}
   
   async create(createSubproject: CreateSubprojectDto) {
-    return await this.db.subProject.create({
+    const {projectId, userId, ...rest} = createSubproject;
+    return this.db.subProject.create({
       data: {
-        area: createSubproject.area,
-        floor: createSubproject.floor,
-        point: createSubproject.point,
-        block: createSubproject.block,
-        roomCount: createSubproject.roomCount,
-        project: {connect: {id: createSubproject.projectId}},
-        user: createSubproject?.userId ? {connect: {id: createSubproject.userId}} : undefined,
+        ...rest,
+        project: {connect: {id: projectId}},
+        user: userId ? {connect: {id: userId}} : undefined,
       }
     })
   }
@@ -45,15 +42,20 @@ export class SubprojectsService {
   }
 
   async update(id: number, updateSubproject: UpdateSubprojectDto) {
-    const record = await this.findOne(id);
+    const _record = await this.findOne(id);
+    const {projectId, userId, ...rest} = updateSubproject;
     return this.db.subProject.update({
       where: {id},
-      data: updateSubproject,
+      data: {
+        ...rest,
+        project: projectId ? {connect: {id: projectId}} : undefined,
+        user: userId ? {connect: {id: userId}} : undefined,
+      },
     })
   }
 
   async remove(id: number) {
-    const record = await this.findOne(id);
+    const _record = await this.findOne(id);
     return this.db.subProject.delete({
       where: {id},
     })

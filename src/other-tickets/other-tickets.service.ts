@@ -8,7 +8,12 @@ export class OtherTicketsService {
   constructor(private readonly db: DatabaseService) {}
 
   create(createOtherTicketDto: CreateOtherTicketDto) {
-    return this.db.otherTicket.create({ data: createOtherTicketDto });
+    const {userId, recieverId, ...rest} = createOtherTicketDto;
+    return this.db.otherTicket.create({ data: {
+      user: { connect: { id: userId } },
+      reciever: { connect: { id: recieverId } },
+      ...rest
+    } });
   }
 
   findAll(queryType?: string) {
@@ -22,7 +27,12 @@ export class OtherTicketsService {
   }
 
   update(id: number, updateOtherTicketDto: UpdateOtherTicketDto) {
-    return this.db.otherTicket.update({ where: { id }, data: updateOtherTicketDto });
+    const {userId, recieverId, ...rest} = updateOtherTicketDto;
+    return this.db.otherTicket.update({ where: { id }, data: {
+      user: userId ? { connect: { id: userId } } : undefined,
+      reciever: recieverId ? { connect: { id: recieverId } } : undefined,
+      ...rest
+    } });
   }
 
   remove(id: number) {

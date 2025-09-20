@@ -8,8 +8,12 @@ export class PostsService {
   constructor(private readonly db: DatabaseService){}
 
   create(createPostDto: CreatePostDto) {
+    const {subProjectId, ...rest} = createPostDto;
     return this.db.post.create({
-      data: createPostDto
+      data: {
+        ...rest,
+        subProject: {connect: {id: subProjectId}}
+      }
     })
   }
 
@@ -37,9 +41,13 @@ export class PostsService {
   }
 
   update(id: number, updatePostDto: UpdatePostDto) {
+    const {subProjectId, ...rest} = updatePostDto;
     return this.db.post.update({
       where: {id},
-      data: updatePostDto
+      data: {
+        ...rest,
+        subProject: subProjectId ? {connect: {id: subProjectId}} : undefined
+      }
     })
   }
 

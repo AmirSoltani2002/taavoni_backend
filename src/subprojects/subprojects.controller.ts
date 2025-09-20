@@ -10,12 +10,12 @@ export class SubprojectsController {
 
   @Roles(['admin', 'system'])
   @Post('multiple')
-  async createMany(@Body() createSubprojectDto: CreateSubprojectDto[]) {
+  createMany(@Body() createSubprojectDto: CreateSubprojectDto[]) {
     return Promise.all(
       createSubprojectDto.map(data => this.subprojectsService.create(data))
     );
   }
-  
+
   @Roles(['admin', 'system'])
   @Post()
   create(@Body() createSubprojectDto: CreateSubprojectDto) {

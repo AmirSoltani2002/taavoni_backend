@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { TYPE, ISARGARIPERCENT, SEX, SHAHEDRELATION } from '@prisma/client';
 import {
   IsString,

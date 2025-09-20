@@ -8,8 +8,12 @@ export class UserDocService {
   constructor(private readonly db: DatabaseService){}
 
   create(createUserDocDto: CreateUserDocDto) {
+    const {userId, ...rest} = createUserDocDto;
     return this.db.userDoc.create({
-      data: createUserDocDto,
+      data: {
+        ...rest,
+        user: {connect: {id: userId} }
+      }
     })
   }
 
@@ -36,16 +40,23 @@ export class UserDocService {
   }
 
   update(id: number, updateUserDocDto: UpdateUserDocDto) {
+    const {userId, ...rest} = updateUserDocDto;
     return this.db.userDoc.update({
       where: {id},
-      data: updateUserDocDto,
+      data: {
+        ...rest,
+        user: userId ? {connect: {id: userId}} : undefined
+      },
     })
   }
 
   updateByUser(id: number, updateUserDocDto: UpdateUserDocDto, detail: string) {
+    const {userId, ...rest} = updateUserDocDto;
     return this.db.userDoc.updateMany({
       where: {userId: id, detail: detail},
-      data: updateUserDocDto,
+      data: {
+        ...rest,
+      },
     })
   }
 
