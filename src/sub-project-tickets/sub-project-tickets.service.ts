@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateSubProjectTicketDto } from './dto/create-sub-project-ticket.dto';
 import { UpdateSubProjectTicketDto } from './dto/update-sub-project-ticket.dto';
 import { DatabaseService } from 'src/database/database.service';
+import { subProjectTicketType } from '@prisma/client';
 
 @Injectable()
 export class SubProjectTicketsService {
@@ -13,12 +14,12 @@ export class SubProjectTicketsService {
   
     findAll(queryType?: string) {
       return this.db.subProjectTicket.findMany({
-        where: queryType ? { type: queryType } : {},
+        where: {type: queryType as subProjectTicketType},
       });
     }
   
     findOne(id: number) {
-      return this.db.subProjectTicket.findUnique({ where: { id } });
+      return this.db.subProjectTicket.findUniqueOrThrow({ where: { id } });
     }
   
     update(id: number, updateSubProjectTicketDto: UpdateSubProjectTicketDto) {
@@ -30,14 +31,13 @@ export class SubProjectTicketsService {
     }
   
     findOneChats(id: number) {
-      return this.db.subProjectTicket.findMany({ where: { id }, include: { chats: true }, orderBy: { chats: { createdAt: 'asc' } }   });
+      return this.db.subProjectTicket.findMany({ where: { id }, include: { chats: {orderBy: {createdAt: 'asc'}} } });
     }
     
     findAllUser(id: number, queryType?: string) {
       return this.db.subProjectTicket.findMany({
-        where: {
-          OR: [{ userId: id }, { recieverId: id }],
-          ...(queryType ? { type: queryType } : {}),
+        where: { userId: id,
+          ...(queryType ? { type: queryType as subProjectTicketType } : {}),
         },
         orderBy: { updatedAt: 'desc' },
       });
