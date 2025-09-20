@@ -9,18 +9,20 @@ export class SubprojectsController {
   constructor(private readonly subprojectsService: SubprojectsService) {}
 
   @Roles(['admin', 'system'])
+  @Post('multiple')
+  async createMany(@Body() createSubprojectDto: CreateSubprojectDto[]) {
+    return Promise.all(
+      createSubprojectDto.map(data => this.subprojectsService.create(data))
+    );
+  }
+  
+  @Roles(['admin', 'system'])
   @Post()
   create(@Body() createSubprojectDto: CreateSubprojectDto) {
     return this.subprojectsService.create(createSubprojectDto);
   }
 
-  @Roles(['admin', 'system'])
-  @Post('multiple')
-  async createMany(@Body() createSubprojectDto: CreateSubprojectDto[]) {
-    await Promise.all(
-      createSubprojectDto.map(data => this.subprojectsService.create(data))
-    );
-  }
+
 
   @Roles(['admin', 'system'])
   @Get('all')
