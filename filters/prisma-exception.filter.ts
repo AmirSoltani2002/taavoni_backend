@@ -5,6 +5,7 @@ import {
   NotFoundException,
   BadRequestException,
   ConflictException,
+  
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Prisma } from '@prisma/client';
@@ -38,8 +39,9 @@ export class PrismaExceptionFilter implements ExceptionFilter {
         case 'P2025':
             httpException = new NotFoundException();
             break;
-        
-    }
+        default:
+          httpException = new BadRequestException(`Unknown error, Exception code: ${exception.code}`)
+    } 
     response.status(httpException.getStatus()).json({
       statusCode: httpException.getStatus(),
       message: httpException.message,
