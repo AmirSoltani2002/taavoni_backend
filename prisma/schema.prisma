@@ -76,10 +76,11 @@ model subProject {
   id  Int @id @default(autoincrement())
   area  Int
   floor Int
-  point  Int
-  block Int
+  point  Int  @default(0)
+  block String
   roomCount Int
   options String?
+  unitNumber  Int @default(0)
   user userinfo? @relation(fields: [userId], references: [id])
   userId  Int?
   project project @relation(fields: [projectId], references: [id])

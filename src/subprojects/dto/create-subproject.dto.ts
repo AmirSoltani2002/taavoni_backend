@@ -6,9 +6,13 @@ export class CreateSubprojectDto {
     @IsNumber()
     floor: number
     @IsNumber()
-    point: number
+    @IsOptional()
+    point?: number
+    @IsString()
+    block: string
     @IsNumber()
-    block: number
+    @IsOptional()
+    unitNumber?: number
     @IsNumber()
     roomCount: number
     @IsString()

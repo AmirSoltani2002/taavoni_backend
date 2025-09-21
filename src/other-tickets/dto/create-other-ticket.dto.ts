@@ -2,7 +2,7 @@ import { IsNumber, IsString } from "class-validator";
 
 export class CreateOtherTicketDto {
     @IsNumber()
-    userId: number;
+    userId?: number;
     @IsNumber()
     recieverId: number;
     @IsString()

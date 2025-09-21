@@ -10,7 +10,8 @@ export class SubProjectTicketsController {
   constructor(private readonly subProjectTicketsService: SubProjectTicketsService) {}
 
   @Post()
-    create(@Body() createSubProjectTicketDto: CreateSubProjectTicketDto) {
+    create(@Body() createSubProjectTicketDto: CreateSubProjectTicketDto, @Request() req) {
+      createSubProjectTicketDto.userId = req['user'].id;
       return this.subProjectTicketsService.create(createSubProjectTicketDto);
     }
   

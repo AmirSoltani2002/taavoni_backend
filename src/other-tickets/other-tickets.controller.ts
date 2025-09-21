@@ -9,7 +9,8 @@ export class OtherTicketsController {
   constructor(private readonly otherTicketsService: OtherTicketsService) {}
 
   @Post()
-  create(@Body() createOtherTicketDto: CreateOtherTicketDto) {
+  create(@Body() createOtherTicketDto: CreateOtherTicketDto, @Request() req) {
+    createOtherTicketDto.userId = req['user'].id;
     return this.otherTicketsService.create(createOtherTicketDto);
   }
 

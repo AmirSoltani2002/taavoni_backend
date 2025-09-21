@@ -3,7 +3,7 @@ import { IsEnum, IsNumber, IsString } from "class-validator";
 
 export class CreateSubProjectTicketDto {
     @IsNumber()
-    userId: number;
+    userId?: number;
     @IsNumber()
     subProjectId: number;
     @IsEnum(subProjectTicketType)

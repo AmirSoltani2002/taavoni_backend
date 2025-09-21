@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "public"."subProject" ADD COLUMN     "unitNumber" INTEGER NOT NULL DEFAULT 0,
+ALTER COLUMN "point" SET DEFAULT 0,
+ALTER COLUMN "block" SET DATA TYPE TEXT;
