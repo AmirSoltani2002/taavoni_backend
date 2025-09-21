@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateSubprojectChatDto } from './create-subproject-chat.dto';
+import { IsOptional, IsString } from "class-validator";
 
-export class UpdateSubprojectChatDto extends PartialType(CreateSubprojectChatDto) {}
+export class UpdateSubprojectChatDto {
+    @IsString()
+    @IsOptional()
+    message?: string;
+}

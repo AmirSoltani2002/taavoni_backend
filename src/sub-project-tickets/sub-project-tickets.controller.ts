@@ -23,7 +23,7 @@ export class SubProjectTicketsController {
   
     @Get('profile')
     findAllUser(@Request() req, @Query('type') type?: string) {
-      return this.subProjectTicketsService.findAllUser(req['user'].id, type);
+      return this.subProjectTicketsService.findAllUser(+req['user'].id, type);
     }
   
     @Roles(['admin', 'system'])

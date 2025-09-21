@@ -1,4 +1,10 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateSubProjectTicketDto } from './create-sub-project-ticket.dto';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class UpdateSubProjectTicketDto extends PartialType(CreateSubProjectTicketDto) {}
+export class UpdateSubProjectTicketDto {
+    @IsNumber()
+    @IsOptional()
+    subProjectId?: number;
+    @IsString()
+    @IsOptional()
+    type?: string;
+}

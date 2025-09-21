@@ -28,11 +28,10 @@ export class SubProjectTicketsService {
     }
   
     update(id: number, updateSubProjectTicketDto: UpdateSubProjectTicketDto) {
-      const {userId, subProjectId, ...rest} = updateSubProjectTicketDto;
+      const {subProjectId, type} = updateSubProjectTicketDto;
       return this.db.subProjectTicket.update({ where: { id }, data: {
-        ...rest,
-        user: userId ? { connect: { id: userId } } : undefined,
-        subProject: subProjectId ? { connect: { id: subProjectId } } : undefined
+        subProject: subProjectId ? { connect: { id: subProjectId } } : undefined,
+        type: type as subProjectTicketType,
       } });
     }
   

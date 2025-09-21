@@ -1,26 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSubprojectChatDto } from './dto/create-subproject-chat.dto';
 import { UpdateSubprojectChatDto } from './dto/update-subproject-chat.dto';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class SubprojectChatsService {
+  constructor(private readonly db: DatabaseService){}
+
   create(createSubprojectChatDto: CreateSubprojectChatDto) {
-    return 'This action adds a new subprojectChat';
+    const { ticketId, senderId, message } = createSubprojectChatDto;
+    return this.db.subProjectChat.create({data: {
+      ticket: { connect: { id: ticketId } },
+      sender: { connect: { id: senderId } },
+      message: message
+    }});
   }
 
   findAll() {
-    return `This action returns all subprojectChats`;
+    return this.db.subProjectChat.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} subprojectChat`;
+    return this.db.subProjectChat.findUniqueOrThrow({ where: { id } });
   }
 
   update(id: number, updateSubprojectChatDto: UpdateSubprojectChatDto) {
-    return `This action updates a #${id} subprojectChat`;
+    return this.db.subProjectChat.update({
+      where: { id },
+      data: updateSubprojectChatDto
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} subprojectChat`;
+    return this.db.subProjectChat.delete({ where: { id } });
   }
 }
