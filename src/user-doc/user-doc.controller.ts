@@ -13,7 +13,7 @@ export class UserDocController {
   @UseInterceptors(
       FileInterceptor('file', {
         storage: diskStorage({
-          destination: './uploads/',
+          destination: './uploads/userdocs/',
           filename: (req, file, callback) => {
             const uniqueSuffix =
               Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -29,10 +29,14 @@ export class UserDocController {
   create(
     @Body() createUserDocDto: CreateUserDocDto,
     @UploadedFile() file: Express.Multer.File,
+    @Request() req,
 ) {
     if(!file)
       throw new BadRequestException("No File is Sent");
-    createUserDocDto.documet = `/uploads/${file?.filename}`;
+    createUserDocDto.documet = `/uploads/userdocs/${file?.filename}`;
+    if(req['user'] !== createUserDocDto.userId && !['admin', 'system'].includes(req['user'].type)){
+      throw new BadRequestException("You can only upload document for yourself");
+    }
     return this.userDocService.create(createUserDocDto);
   }
 
@@ -57,7 +61,7 @@ export class UserDocController {
   @UseInterceptors(
       FileInterceptor('file', {
         storage: diskStorage({
-          destination: './uploads/',
+          destination: './uploads/userdocs/',
           filename: (req, file, callback) => {
             const uniqueSuffix =
               Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -73,7 +77,7 @@ export class UserDocController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDocDto: UpdateUserDocDto, @UploadedFile() file?: Express.Multer.File) {
     if(file){
-      updateUserDocDto.documet = `/uploads/${file?.filename}`;
+      updateUserDocDto.documet = `/uploads/userdocs/${file?.filename}`;
     }
     return this.userDocService.update(+id, updateUserDocDto);
   }
@@ -92,7 +96,7 @@ export class UserDocController {
   @UseInterceptors(
       FileInterceptor('file', {
         storage: diskStorage({
-          destination: './uploads/',
+          destination: './uploads/userdocs/',
           filename: (req, file, callback) => {
             const uniqueSuffix =
               Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -112,7 +116,7 @@ export class UserDocController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     if(file){
-      updateUserDocDto.documet = `/uploads/${file?.filename}`;
+      updateUserDocDto.documet = `/uploads/userdocs/${file?.filename}`;
     }
     return this.userDocService.updateByUser(+req['user'].id, updateUserDocDto, detail);
   }

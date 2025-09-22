@@ -54,6 +54,26 @@ model userDoc {
   updatedAt DateTime @updatedAt
 }
 
+model projectDoc {
+  id  Int @id @default(autoincrement())
+  project  project @relation(fields: [projectId], references: [id])
+  projectId  Int
+  documet String
+  detail String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model subProjectDoc {
+  id  Int @id @default(autoincrement())
+  subProject  subProject @relation(fields: [subProjectId], references: [id])
+  subProjectId  Int
+  documet String
+  detail String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model project {
   id  Int @id @default(autoincrement())
   name  String
@@ -70,6 +90,7 @@ model project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   subProjects subProject[]
+  projectDocs projectDoc[]
 }
 
 model subProject {
@@ -86,6 +107,7 @@ model subProject {
   project project @relation(fields: [projectId], references: [id])
   posts post[]
   subProjectTickets subProjectTicket[]
+  subProjectDocs  subProjectDoc[]
   projectId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
