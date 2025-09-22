@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UnauthorizedException, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UnauthorizedException, Query, UseInterceptors } from '@nestjs/common';
 import { OtherTicketsService } from './other-tickets.service';
 import { CreateOtherTicketDto } from './dto/create-other-ticket.dto';
 import { UpdateOtherTicketDto } from './dto/update-other-ticket.dto';
@@ -15,6 +15,7 @@ export class OtherTicketsController {
     return this.otherTicketsService.create(rest);
   }
 
+  @UseInterceptors()
   @Get('profile')
   findAllUser(@Request() req, @Query('type') type?: string) {
     return this.otherTicketsService.findAllUser(req['user'].id, type);

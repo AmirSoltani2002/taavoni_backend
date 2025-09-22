@@ -9,6 +9,7 @@ import {
   UnauthorizedException,
   NotFoundException,
   Patch,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PasswordService } from 'src/auth/config';
 import { UsersService } from './users.service';
@@ -51,6 +52,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @UseInterceptors() //to override cache
   @Get('profile')
   async profile(@Request() req): Promise<any> {
     const userId = req['user'].id;

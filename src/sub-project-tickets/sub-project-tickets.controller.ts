@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Request, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Request, UnauthorizedException, UseInterceptors } from '@nestjs/common';
 import { SubProjectTicketsService } from './sub-project-tickets.service';
 import { CreateSubProjectTicketDto } from './dto/create-sub-project-ticket.dto';
 import { UpdateSubProjectTicketDto } from './dto/update-sub-project-ticket.dto';
@@ -21,7 +21,8 @@ export class SubProjectTicketsController {
     findAll(@Query('type') type?: string) {
       return this.subProjectTicketsService.findAll(type);
     }
-  
+    
+    @UseInterceptors()
     @Get('profile')
     findAllUser(@Request() req, @Query('type') type?: string) {
       return this.subProjectTicketsService.findAllUser(+req['user'].id, type);

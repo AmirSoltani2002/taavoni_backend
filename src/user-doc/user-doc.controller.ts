@@ -10,6 +10,7 @@ import { diskStorage } from 'multer';
 export class UserDocController {
   constructor(private readonly userDocService: UserDocService) {}
 
+  @UseInterceptors()
   @Get('profile')
   findMy(@Request() req, @Query('detail') detail?: string) {
     return this.userDocService.findAllByUser(+req['user'].id, detail);

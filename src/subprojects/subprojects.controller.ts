@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseInterceptors } from '@nestjs/common';
 import { SubprojectsService } from './subprojects.service';
 import { CreateSubprojectDto } from './dto/create-subproject.dto';
 import { UpdateSubprojectDto } from './dto/update-subproject.dto';
@@ -36,6 +36,7 @@ export class SubprojectsController {
     return this.subprojectsService.findAllByUser(+id)
   }
 
+  @UseInterceptors()
   @Get('profile') 
   findMy(@Request() req){
     return this.subprojectsService.findAllByUser(req['user'].id)

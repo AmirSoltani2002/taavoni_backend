@@ -5,7 +5,7 @@ import { UsersModule } from './users/users.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { GlobalGuard } from './auth/auth.guard';
 import { ProjectsModule } from './projects/projects.module';
 import { SubprojectsModule } from './subprojects/subprojects.module';
@@ -17,22 +17,34 @@ import { OtherChatsModule } from './other-chats/other-chats.module';
 import { SubprojectChatsModule } from './subproject-chats/subproject-chats.module';
 import { ProjectDocsModule } from './project-docs/project-docs.module';
 import { SubProjectDocsModule } from './sub-project-docs/sub-project-docs.module';
-import { CacheModule } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path/win32';
+import { join } from 'path';
+import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
   imports: [UsersModule, DatabaseModule, AuthModule, ConfigModule.forRoot({isGlobal: true,}), ProjectsModule, SubprojectsModule, 
             UserDocModule, PostsModule, SubProjectTicketsModule, OtherTicketsModule, OtherChatsModule, SubprojectChatsModule, 
-            ProjectDocsModule, SubProjectDocsModule, CacheModule.register(), ServeStaticModule.forRoot({
-              rootPath: join(__dirname, '..', 'uploads'),
-              serveRoot: '/downloadfile',
+            ProjectDocsModule, SubProjectDocsModule, 
+            CacheModule.register({
+              store: redisStore,
+              host: 'localhost',
+              port: '6379',
+              ttl: 30,
+            }), 
+            ServeStaticModule.forRoot({
+              rootPath: join(__dirname, '..', '..', 'uploads'),
+              serveRoot: '/uploads',
             })],
   controllers: [AppController],
   providers: [AppService,
     {
       provide: APP_GUARD,
       useClass: GlobalGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
     },
   ],
 })
