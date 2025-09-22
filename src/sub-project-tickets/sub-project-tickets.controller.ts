@@ -26,13 +26,7 @@ export class SubProjectTicketsController {
     findAllUser(@Request() req, @Query('type') type?: string) {
       return this.subProjectTicketsService.findAllUser(+req['user'].id, type);
     }
-  
-    @Roles(['admin', 'system'])
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-      return this.subProjectTicketsService.findOne(+id);
-    }
-  
+
     @Get('chat/:id')
     async findOneChats(@Param('id') id: string, @Request() req) {
       const thisticket = await this.subProjectTicketsService.findOne(+id);
@@ -41,6 +35,13 @@ export class SubProjectTicketsController {
       }
       return this.subProjectTicketsService.findOneChats(+id);
     }
+  
+    @Roles(['admin', 'system'])
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+      return this.subProjectTicketsService.findOne(+id);
+    }
+
   
     @Patch(':id')
     async update(@Param('id') id: string, @Body() updateSubProjectTicketDto: UpdateSubProjectTicketDto, @Request() req) {

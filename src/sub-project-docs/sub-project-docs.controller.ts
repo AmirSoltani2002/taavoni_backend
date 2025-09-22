@@ -52,6 +52,11 @@ export class SubProjectDocsController {
     return this.subProjectDocsService.create(createSubProjectDocDto);
   }
 
+  @Roles(['admin', 'system'])
+  @Get('subproject/:id')
+  findAllBySubProject(@Param('id') id: string, @Query('detail') detail?: string) {
+    return this.subProjectDocsService.findAllBySubProject(+id, detail);
+  }
   /**
    * Get all SubProjectDocs
    */
@@ -73,11 +78,6 @@ export class SubProjectDocsController {
   /**
    * Get all SubProjectDocs for a specific SubProject
    */
-  @Roles(['admin', 'system'])
-  @Get('subproject/:id')
-  findAllBySubProject(@Param('id') id: string, @Query('detail') detail?: string) {
-    return this.subProjectDocsService.findAllBySubProject(+id, detail);
-  }
 
   /**
    * Update SubProjectDoc with optional file

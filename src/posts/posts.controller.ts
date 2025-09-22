@@ -19,11 +19,6 @@ export class PostsController {
     return this.postsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
-  }
-
   @Get('subproject/:id')
   findOneByProject(@Param('id') id: string) {
     return this.postsService.findAllBySubProject(+id);
@@ -33,6 +28,12 @@ export class PostsController {
   findOneBysubProject(@Param('id') id: string) {
     return this.postsService.findAllByProject(+id);
   }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.postsService.findOne(+id);
+  }
+
 
   @Roles(['admin', 'system'])
   @Patch(':id')

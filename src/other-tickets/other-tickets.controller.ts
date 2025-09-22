@@ -15,21 +15,9 @@ export class OtherTicketsController {
     return this.otherTicketsService.create(rest);
   }
 
-  @Roles(['admin', 'system'])
-  @Get()
-  findAll(@Query('type') type?: string) {
-    return this.otherTicketsService.findAll(type);
-  }
-
   @Get('profile')
   findAllUser(@Request() req, @Query('type') type?: string) {
     return this.otherTicketsService.findAllUser(req['user'].id, type);
-  }
-
-  @Roles(['admin', 'system'])
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.otherTicketsService.findOne(+id);
   }
 
   @Get('chat/:id')
@@ -39,6 +27,18 @@ export class OtherTicketsController {
       throw new UnauthorizedException();
     }
     return this.otherTicketsService.findOneChats(+id);
+  }
+
+  @Roles(['admin', 'system'])
+  @Get()
+  findAll(@Query('type') type?: string) {
+    return this.otherTicketsService.findAll(type);
+  }
+
+  @Roles(['admin', 'system'])
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.otherTicketsService.findOne(+id);
   }
 
   @Patch(':id')
