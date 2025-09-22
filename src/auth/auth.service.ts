@@ -13,8 +13,11 @@ export class AuthService {
             throw new NotFoundException('User is not found')
         if(!(await PasswordService.compare(user.password, inputPassword)))
             throw new UnauthorizedException('Incorrect password');
-        const {password, ...userdata} = user;
-        return {token: await this.jwtService.signAsync(userdata)}
+        const tokenData = {
+            id: user.id,
+            type: user.type,
+        }
+        return {token: await this.jwtService.signAsync(tokenData)}
     }
 
     async signInWithNationalNumber(nationalNumber: string, password: string) {

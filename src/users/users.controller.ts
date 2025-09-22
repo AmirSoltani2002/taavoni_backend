@@ -53,8 +53,7 @@ export class UsersController {
 
   @Get('profile')
   profile(@Request() req): any {
-    const {password, ...rest} = req['user'];
-    return rest;
+    return req['user'];
   }
 
   @Patch('profile')

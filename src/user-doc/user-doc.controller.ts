@@ -34,7 +34,7 @@ export class UserDocController {
     if(!file)
       throw new BadRequestException("No File is Sent");
     createUserDocDto.documet = `/uploads/userdocs/${file?.filename}`;
-    if(req['user'] !== createUserDocDto.userId && !['admin', 'system'].includes(req['user'].type)){
+    if(req['user'].id !== createUserDocDto.userId && !['admin', 'system'].includes(req['user'].type)){
       throw new BadRequestException("You can only upload document for yourself");
     }
     return this.userDocService.create(createUserDocDto);
