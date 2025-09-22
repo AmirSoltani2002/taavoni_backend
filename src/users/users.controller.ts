@@ -64,7 +64,7 @@ export class UsersController {
   @Patch('profile')
   async updateProfile(@Body() updateUserDto: UpdateUserDto, @Request() req) {
     const {password, ..._rest} = updateUserDto;
-    if(updateUserDto?.type && !['admin', 'system'].includes(req['user'].type) && ['admin', 'system'].includes(updateUserDto.type) || updateUserDto?.accepted !== undefined  ){
+    if((updateUserDto?.type && !['admin', 'system'].includes(req['user'].type) && ['admin', 'system'].includes(updateUserDto.type) ) || updateUserDto?.accepted !== undefined  ){
       throw new UnauthorizedException();
     }
     if(password){

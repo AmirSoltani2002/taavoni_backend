@@ -4,7 +4,7 @@ export class CreateUserDocDto {
     @IsNumber()
     userId: number
     @IsString()
-    documet: string
+    document: string
     @IsString()
     @IsOptional()
     detail?: string;
