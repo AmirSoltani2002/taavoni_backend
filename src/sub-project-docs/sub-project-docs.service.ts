@@ -8,11 +8,12 @@ export class SubProjectDocsService {
   constructor(private readonly db: DatabaseService){}
 
   create(createSubProjectDocDto: CreateSubProjectDocDto) {
-    const {subProjectId, ...rest} = createSubProjectDocDto;
+    const {subProjectId, document, detail} = createSubProjectDocDto;
     return this.db.subProjectDoc.create({
       data: {
         subProject: { connect: { id: subProjectId } },
-        ...rest
+        document: document as string,
+        detail
       }
     })
   }

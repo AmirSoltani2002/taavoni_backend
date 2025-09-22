@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseInterceptors } from '@nestjs/common';
 import { CreateProjectDocDto } from './dto/create-project-doc.dto';
 import { UpdateProjectDocDto } from './dto/update-project-doc.dto';
 import { DatabaseService } from 'src/database/database.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Injectable()
 export class ProjectDocsService {
   constructor(private readonly db: DatabaseService){}
 
   create(createProjectDocDto: CreateProjectDocDto) {
-    const {projectId, ...rest} = createProjectDocDto;
-    return this.db.projectDoc.create({ data: { project: { connect: { id: projectId } }, ...rest } });
+    const {projectId, document, detail} = createProjectDocDto;
+    return this.db.projectDoc.create({ data: { project: { connect: { id: projectId } }, document: document as string, detail } });
   }
 
   findAll(detail?: string) {

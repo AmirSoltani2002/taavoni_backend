@@ -8,11 +8,12 @@ export class UserDocService {
   constructor(private readonly db: DatabaseService){}
 
   create(createUserDocDto: CreateUserDocDto) {
-    const {userId, ...rest} = createUserDocDto;
+    const {userId, document, detail} = createUserDocDto;
     return this.db.userDoc.create({
       data: {
-        ...rest,
-        user: {connect: {id: userId} }
+        document: document as string,
+        user: {connect: {id: userId} },
+        detail
       }
     })
   }

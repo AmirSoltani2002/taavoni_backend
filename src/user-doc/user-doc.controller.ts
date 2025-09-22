@@ -38,7 +38,7 @@ export class UserDocController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     if(file){
-      updateUserDocDto.documet = `/uploads/userdocs/${file?.filename}`;
+      updateUserDocDto.document = `/uploads/userdocs/${file?.filename}`;
     }
     return this.userDocService.updateByUser(+req['user'].id, updateUserDocDto, detail);
   }
@@ -77,7 +77,7 @@ export class UserDocController {
 ) {
     if(!file)
       throw new BadRequestException("No File is Sent");
-    createUserDocDto.documet = `/uploads/userdocs/${file?.filename}`;
+    createUserDocDto.document = `/uploads/userdocs/${file?.filename}`;
     if(req['user'].id !== createUserDocDto.userId && !['admin', 'system'].includes(req['user'].type)){
       throw new BadRequestException("You can only upload document for yourself");
     }
@@ -115,7 +115,7 @@ export class UserDocController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDocDto: UpdateUserDocDto, @UploadedFile() file?: Express.Multer.File) {
     if(file){
-      updateUserDocDto.documet = `/uploads/userdocs/${file?.filename}`;
+      updateUserDocDto.document = `/uploads/userdocs/${file?.filename}`;
     }
     return this.userDocService.update(+id, updateUserDocDto);
   }

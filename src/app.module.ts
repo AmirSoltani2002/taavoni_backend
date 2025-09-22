@@ -17,9 +17,17 @@ import { OtherChatsModule } from './other-chats/other-chats.module';
 import { SubprojectChatsModule } from './subproject-chats/subproject-chats.module';
 import { ProjectDocsModule } from './project-docs/project-docs.module';
 import { SubProjectDocsModule } from './sub-project-docs/sub-project-docs.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path/win32';
 
 @Module({
-  imports: [UsersModule, DatabaseModule, AuthModule, ConfigModule.forRoot({isGlobal: true,}), ProjectsModule, SubprojectsModule, UserDocModule, PostsModule, SubProjectTicketsModule, OtherTicketsModule, OtherChatsModule, SubprojectChatsModule, ProjectDocsModule, SubProjectDocsModule],
+  imports: [UsersModule, DatabaseModule, AuthModule, ConfigModule.forRoot({isGlobal: true,}), ProjectsModule, SubprojectsModule, 
+            UserDocModule, PostsModule, SubProjectTicketsModule, OtherTicketsModule, OtherChatsModule, SubprojectChatsModule, 
+            ProjectDocsModule, SubProjectDocsModule, CacheModule.register(), ServeStaticModule.forRoot({
+              rootPath: join(__dirname, '..', 'uploads'),
+              serveRoot: '/downloadfile',
+            })],
   controllers: [AppController],
   providers: [AppService,
     {
