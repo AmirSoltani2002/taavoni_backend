@@ -58,7 +58,7 @@ model projectDoc {
   id  Int @id @default(autoincrement())
   project  project @relation(fields: [projectId], references: [id])
   projectId  Int
-  documet String
+  document String
   detail String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -68,7 +68,7 @@ model subProjectDoc {
   id  Int @id @default(autoincrement())
   subProject  subProject @relation(fields: [subProjectId], references: [id])
   subProjectId  Int
-  documet String
+  document String
   detail String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

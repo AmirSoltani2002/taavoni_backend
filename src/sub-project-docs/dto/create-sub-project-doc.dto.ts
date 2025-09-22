@@ -1,8 +1,10 @@
+import { IsNumber, IsOptional, IsString } from "class-validator";
+
 export class CreateSubProjectDocDto {
     @IsNumber()
     subProjectId: number
     @IsString()
-    documet: string
+    document: string
     @IsString()
     @IsOptional()
     detail?: string;

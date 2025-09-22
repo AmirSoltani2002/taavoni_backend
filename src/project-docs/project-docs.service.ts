@@ -20,6 +20,15 @@ export class ProjectDocsService {
     });
   }
 
+  findAllByProject(id: number, detail?: string){
+    return this.db.projectDoc.findMany({
+      where: {
+        projectId: id,
+        ...(detail ? { detail: { contains: detail } } : {})
+      }
+    });
+  }
+
   findOne(id: number) {
     return this.db.projectDoc.findUnique({ where: { id } });
   }

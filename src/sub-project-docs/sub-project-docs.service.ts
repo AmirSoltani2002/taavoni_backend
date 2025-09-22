@@ -25,6 +25,15 @@ export class SubProjectDocsService {
     });
   }
 
+  findAllBySubProject(id: number, detail?: string){
+    return this.db.subProjectDoc.findMany({
+      where: {
+        subProjectId: id,
+        ...(detail ? { detail: { contains: detail } } : {})
+      }
+    });
+  }
+
   findOne(id: number) {
     return this.db.subProjectDoc.findUnique({
       where: { id }
