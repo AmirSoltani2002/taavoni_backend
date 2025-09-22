@@ -4,7 +4,8 @@ export class CreateProjectDocDto {
     @IsNumber()
     projectId: number
     @IsString()
-    document: string
+    @IsOptional()
+    document?: string
     @IsString()
     @IsOptional()
     detail?: string;

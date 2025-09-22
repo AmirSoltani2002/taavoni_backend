@@ -4,7 +4,8 @@ export class CreateSubProjectDocDto {
     @IsNumber()
     subProjectId: number
     @IsString()
-    document: string
+    @IsOptional()
+    document?: string
     @IsString()
     @IsOptional()
     detail?: string;
