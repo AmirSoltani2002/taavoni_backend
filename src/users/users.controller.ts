@@ -52,8 +52,13 @@ export class UsersController {
   }
 
   @Get('profile')
-  profile(@Request() req): any {
-    return req['user'];
+  async profile(@Request() req): Promise<any> {
+    const userId = req['user'].id;
+    const user = await this.usersService.findOne(userId);
+    if(!user)
+      throw new NotFoundException();
+    const {password, ...rest} = user;
+    return rest;
   }
 
   @Patch('profile')
@@ -65,7 +70,9 @@ export class UsersController {
     if(password){
       updateUserDto.password = await PasswordService.hashPassword(password)
     }
-    return this.usersService.update(+req['user'].id, updateUserDto);
+    const updatedUser = await this.usersService.update(+req['user'].id, updateUserDto);
+    const {password: _pass, ...rest} = updatedUser;
+    return rest;
   }
 
   @Delete('profile')
