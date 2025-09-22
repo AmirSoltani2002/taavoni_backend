@@ -107,6 +107,9 @@ model subProjectTicket {
   subProjectId Int
   user userinfo @relation(fields: [userId], references: [id])
   userId  Int
+  senderRead  Boolean @default(true)
+  adminRead Boolean @default(false)
+  closed  Boolean @default(false)
   type subProjectTicketType
   chats subProjectChat[]
   createdAt DateTime @default(now())
@@ -139,9 +142,12 @@ model otherTicket {
   id  Int @id @default(autoincrement())
   user userinfo @relation("userRelation", fields: [userId], references: [id])
   userId  Int
-  reciever userinfo @relation("recieverRelation", fields: [recieverId], references: [id])
-  recieverId Int
+  reciever userinfo? @relation("recieverRelation", fields: [recieverId], references: [id])
+  recieverId Int?
   type String
+  senderRead  Boolean @default(true)
+  recieverRead Boolean @default(false)
+  closed  Boolean @default(false)
   chats otherChat[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

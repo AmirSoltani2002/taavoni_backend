@@ -10,8 +10,9 @@ export class OtherTicketsController {
 
   @Post()
   create(@Body() createOtherTicketDto: CreateOtherTicketDto, @Request() req) {
-    createOtherTicketDto.userId = req['user'].id;
-    return this.otherTicketsService.create(createOtherTicketDto);
+    const {recieverRead, senderRead, closed, ...rest} = createOtherTicketDto;
+    rest.userId = req['user'].id;
+    return this.otherTicketsService.create(rest);
   }
 
   @Roles(['admin', 'system'])

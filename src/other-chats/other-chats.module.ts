@@ -5,5 +5,6 @@ import { OtherChatsController } from './other-chats.controller';
 @Module({
   controllers: [OtherChatsController],
   providers: [OtherChatsService],
+  exports: [OtherChatsService],
 })
 export class OtherChatsModule {}

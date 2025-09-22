@@ -1,5 +1,5 @@
 import { subProjectTicketType } from "@prisma/client";
-import { IsEnum, IsNumber } from "class-validator";
+import { IsBoolean, IsEnum, IsNumber, IsOptional } from "class-validator";
 
 export class CreateSubProjectTicketDto {
     @IsNumber()
@@ -8,5 +8,14 @@ export class CreateSubProjectTicketDto {
     subProjectId: number;
     @IsEnum(subProjectTicketType)
     type: subProjectTicketType;
+    @IsBoolean()
+    @IsOptional()
+    senderRead?: boolean;
+    @IsBoolean()
+    @IsOptional()
+    adminRead?: boolean;
+    @IsBoolean()
+    @IsOptional()
+    closed?: boolean;
 }
 

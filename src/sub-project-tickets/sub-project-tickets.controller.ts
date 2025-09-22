@@ -11,8 +11,9 @@ export class SubProjectTicketsController {
 
   @Post()
     create(@Body() createSubProjectTicketDto: CreateSubProjectTicketDto, @Request() req) {
-      createSubProjectTicketDto.userId = req['user'].id;
-      return this.subProjectTicketsService.create(createSubProjectTicketDto);
+      const {senderRead, adminRead, closed, ...rest} = createSubProjectTicketDto;
+      rest.userId = req['user'].id;
+      return this.subProjectTicketsService.create(rest);
     }
   
     @Roles(['admin', 'system'])

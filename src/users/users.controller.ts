@@ -15,21 +15,34 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Public, Roles } from 'src/auth/roles.decorator';
+import { OtherTicketsService } from 'src/other-tickets/other-tickets.service';
+import { OtherChatsService } from 'src/other-chats/other-chats.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService, 
+              private readonly otherTicketsService: OtherTicketsService,
+              private readonly otherChatsService: OtherChatsService) {}
 
   @Public(true)
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     //if (!file) throw new BadRequestException('National card file is required');
-    const {accepted, ..._rest} = createUserDto;
-    if(accepted !== undefined){
-      throw new UnauthorizedException();
-    }
-    createUserDto.password = await PasswordService.hashPassword(createUserDto.password)
-    return this.usersService.create(createUserDto);
+    const {accepted, ...rest} = createUserDto;
+    rest.password = await PasswordService.hashPassword(rest.password);
+    const user =  await this.usersService.create(rest);
+    const ticketBody = {
+      userId: user.id,
+      type: 'signup',
+    };
+    const ticket = await this.otherTicketsService.create(ticketBody);
+    const chatBody = {
+      senderId: user.id,
+      ticketId: ticket.id,
+      message: `من، ${user.name} ${user.lastName} با کدملی ${user.nationalNumber}، درخواست ثبتنام در سیستم تعاونی مسکن شماره سه کارکنان دانشگاه تهران را دارم.`
+    };
+    const _chat = await this.otherChatsService.create(chatBody);
+    return user;
   }
 
   @Roles(['system', 'admin'])
