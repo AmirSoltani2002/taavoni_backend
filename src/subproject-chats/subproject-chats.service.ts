@@ -17,11 +17,22 @@ export class SubprojectChatsService {
   }
 
   findAll() {
-    return this.db.subProjectChat.findMany();
+    return this.db.subProjectChat.findMany({
+      include: {
+        sender: true,
+        ticket: true,
+      }
+    });
   }
 
   findOne(id: number) {
-    return this.db.subProjectChat.findUniqueOrThrow({ where: { id } });
+    return this.db.subProjectChat.findUniqueOrThrow({ 
+      where: { id },
+      include: {
+        sender: true,
+        ticket: true,
+      },
+      });
   }
 
   update(id: number, updateSubprojectChatDto: UpdateSubprojectChatDto) {

@@ -17,11 +17,14 @@ export class OtherChatsService {
   }
 
   findAll() {
-    return this.db.otherChat.findMany();
+    return this.db.otherChat.findMany({
+      include: {ticket: true, sender: true}
+    });
   }
 
   findOne(id: number) {
-    return this.db.otherChat.findUniqueOrThrow({ where: { id } });
+    return this.db.otherChat.findUniqueOrThrow({ where: { id },
+    include: {ticket: true, sender: true} });
   }
 
   update(id: number, updateOtherChatDto: UpdateOtherChatDto) {

@@ -20,11 +20,13 @@ export class SubProjectTicketsService {
     findAll(queryType?: string) {
       return this.db.subProjectTicket.findMany({
         where: {type: queryType as subProjectTicketType},
+        include: {user: true, subProject: true}
       });
     }
   
     findOne(id: number) {
-      return this.db.subProjectTicket.findUniqueOrThrow({ where: { id } });
+      return this.db.subProjectTicket.findUniqueOrThrow({ where: { id },
+      include: {user: true, subProject: true} });
     }
   
     update(id: number, updateSubProjectTicketDto: UpdateSubProjectTicketDto) {
@@ -40,7 +42,7 @@ export class SubProjectTicketsService {
     }
   
     findOneChats(id: number) {
-      return this.db.subProjectTicket.findMany({ where: { id }, include: { chats: {orderBy: {createdAt: 'asc'}} } });
+      return this.db.subProjectTicket.findMany({ where: { id }, include: { chats: {orderBy: {createdAt: 'asc'}, include: {sender: true}} } });
     }
     
     findAllUser(id: number, queryType?: string) {
@@ -49,6 +51,7 @@ export class SubProjectTicketsService {
           ...(queryType ? { type: queryType as subProjectTicketType } : {}),
         },
         orderBy: { updatedAt: 'desc' },
+        include: {user: true, subProject: true}
       });
     }
 }

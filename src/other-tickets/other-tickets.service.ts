@@ -19,11 +19,13 @@ export class OtherTicketsService {
   findAll(queryType?: string) {
     return this.db.otherTicket.findMany({
       where: queryType ? { type: queryType } : {},
+      include: {user: true, reciever: true}
     });
   }
 
   findOne(id: number) {
-    return this.db.otherTicket.findUniqueOrThrow({ where: { id } });
+    return this.db.otherTicket.findUniqueOrThrow({ where: { id },
+      include: {user: true, reciever: true} });
   }
 
   update(id: number, updateOtherTicketDto: UpdateOtherTicketDto) {
@@ -40,7 +42,7 @@ export class OtherTicketsService {
   }
 
   findOneChats(id: number) {
-    return this.db.otherTicket.findMany({ where: { id }, include: { chats: {orderBy: { createdAt: 'asc' } }}  });
+    return this.db.otherTicket.findMany({ where: { id }, include: { chats: {orderBy: { createdAt: 'asc' }, include: {sender: true} }}  });
   }
   
   findAllUser(id: number, queryType?: string) {
@@ -50,6 +52,10 @@ export class OtherTicketsService {
         ...(queryType ? { type: queryType } : {}),
       },
       orderBy: { updatedAt: 'desc' },
+      include: {
+        user: true,
+        reciever: true
+      }
     });
   }
 }
