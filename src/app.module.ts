@@ -20,6 +20,7 @@ import { SubProjectDocsModule } from './sub-project-docs/sub-project-docs.module
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { BlocksModule } from './blocks/blocks.module';
 import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
@@ -35,7 +36,7 @@ import * as redisStore from 'cache-manager-ioredis';
             ServeStaticModule.forRoot({
               rootPath: join(__dirname, '..', '..', 'uploads'),
               serveRoot: '/uploads',
-            })],
+            }), BlocksModule],
   controllers: [AppController],
   providers: [AppService,
     {

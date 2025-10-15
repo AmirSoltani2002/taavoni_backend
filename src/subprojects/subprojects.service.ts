@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubprojectDto } from './dto/create-subproject.dto';
 import { UpdateSubprojectDto } from './dto/update-subproject.dto';
-import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
@@ -9,11 +8,11 @@ export class SubprojectsService {
   constructor(private readonly db: DatabaseService) {}
   
   async create(createSubproject: CreateSubprojectDto) {
-    const {projectId, userId, ...rest} = createSubproject;
+    const {blockId, userId, ...rest} = createSubproject;
     return this.db.subProject.create({
       data: {
         ...rest,
-        project: {connect: {id: projectId}},
+        block: {connect: {id: blockId}},
         user: userId ? {connect: {id: userId}} : undefined,
       }
     })
@@ -43,12 +42,12 @@ export class SubprojectsService {
 
   async update(id: number, updateSubproject: UpdateSubprojectDto) {
     const _record = await this.findOne(id);
-    const {projectId, userId, ...rest} = updateSubproject;
+    const {blockId, userId, ...rest} = updateSubproject;
     return this.db.subProject.update({
       where: {id},
       data: {
         ...rest,
-        project: projectId ? {connect: {id: projectId}} : undefined,
+        block: blockId ? {connect: {id: blockId}} : undefined,
         user: userId ? {connect: {id: userId}} : undefined,
       },
     })

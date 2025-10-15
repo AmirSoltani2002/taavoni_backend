@@ -15,21 +15,35 @@ export class ProjectsService {
 
   findAll() {
     return this.db.project.findMany({
-      include: {subProjects: true}
+      include: {
+        blocks: {
+          include: {
+            subProjects: true
+          }
+        }
+      }
     })
   }
 
   findAvailable() {
     return this.db.project.findMany({
       where: {
-        subProjects:{
+        blocks: {
           some: {
-            userId: null
+            subProjects: {
+              some: {
+                userId: null
+              }
+            }
           }
         }
       },
       include: {
-        subProjects: true
+        blocks: {
+          include: {
+            subProjects: true
+          }
+        }
       }
     })
   }

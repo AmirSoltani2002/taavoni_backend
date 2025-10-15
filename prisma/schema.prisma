@@ -78,19 +78,27 @@ model project {
   id  Int @id @default(autoincrement())
   name  String
   address String
-  sharedArea  Int
-  floorCount Int
-  unitCount Int
   landArea  Int
-  buildingArea  Int
-  blockNumber Int
-  options String?
   startDate DateTime
   endDate DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  subProjects subProject[]
+  blocks block[]
   projectDocs projectDoc[]
+}
+
+model block {
+  id  Int @id @default(autoincrement())
+  name  String
+  floorCount Int
+  shareArea Int
+  buildingArea Int
+  description String?
+  projectId Int
+  project project @relation(fields: [projectId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  subProjects subProject[]
 }
 
 model subProject {
@@ -98,17 +106,17 @@ model subProject {
   area  Int
   floor Int
   point  Int  @default(0)
-  block String
   roomCount Int
   options String?
+  direction String
   unitNumber  Int @default(0)
   user userinfo? @relation(fields: [userId], references: [id])
   userId  Int?
-  project project @relation(fields: [projectId], references: [id])
+  block block @relation(fields: [blockId], references: [id])
+  blockId Int
   posts post[]
   subProjectTickets subProjectTicket[]
   subProjectDocs  subProjectDoc[]
-  projectId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

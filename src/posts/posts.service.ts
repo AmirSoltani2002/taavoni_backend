@@ -21,7 +21,11 @@ export class PostsService {
     return this.db.post.findMany({
       include: {subProject: {
         include: {
-          project: true
+          block: {
+            include: {
+              project: true
+            }
+          }
         }
       }
       }
@@ -33,7 +37,11 @@ export class PostsService {
       where: {id},
       include: {subProject: {
         include: {
-          project: true
+          block: {
+            include: {
+              project: true
+            }
+          }
         }
       }
       }
@@ -62,7 +70,11 @@ export class PostsService {
       where: {subProjectId: id},
       include: {subProject: {
         include: {
-          project: true
+          block: {
+            include: {
+              project: true
+            }
+          }
         }
       }
       }
@@ -72,11 +84,17 @@ export class PostsService {
   findAllByProject(id: number) {
     return this.db.post.findMany({
       where: {subProject: {
-        projectId: id
+        block: {
+          projectId: id
+        }
       }},
       include: {subProject: {
         include: {
-          project: true
+          block: {
+            include: {
+              project: true
+            }
+          }
         }
       }
       }

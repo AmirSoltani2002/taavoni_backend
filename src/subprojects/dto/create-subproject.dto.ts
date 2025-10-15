@@ -8,8 +8,6 @@ export class CreateSubprojectDto {
     @IsNumber()
     @IsOptional()
     point?: number
-    @IsString()
-    block: string
     @IsNumber()
     @IsOptional()
     unitNumber?: number
@@ -22,5 +20,7 @@ export class CreateSubprojectDto {
     @IsOptional()
     userId?: number
     @IsNumber()
-    projectId: number
+    blockId: number
+    @IsString()
+    direction: string
 }
