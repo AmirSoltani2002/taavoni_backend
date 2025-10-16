@@ -16,43 +16,32 @@ export class CreateUserDto {
   @IsString()
   name: string;
   @IsString()
-  @IsNotEmpty({ message: 'Last name is required' })
   lastName: string;
   @IsEnum(SEX)
-  @IsNotEmpty()
   sex: SEX;
   @IsDate()
-  @IsNotEmpty()
   @IsOptional()
   birthDay?: Date;
   @IsString()
-  @IsNotEmpty()
   @IsOptional()
   address?: string;
   @IsPhoneNumber('IR')
-  @IsNotEmpty()
   @IsOptional()
   homePhone?: string;
   @IsPhoneNumber('IR')
-  @IsNotEmpty()
   @IsOptional()
   mobile?: string;
   @IsPhoneNumber('IR')
-  @IsNotEmpty()
   @IsOptional()
   workPhone?: string;
   @IsEmail()
-  @IsNotEmpty()
   email: string;
   @IsString()
-  @IsNotEmpty({ message: 'National number is required' })
   nationalNumber: string;
   @IsEnum(TYPE)
-  @IsNotEmpty()
   @IsOptional()
   type?: TYPE;
   @IsString()
-  @IsNotEmpty()
   password: string;
   @IsEnum(ISARGARIPERCENT)
   @IsOptional()
