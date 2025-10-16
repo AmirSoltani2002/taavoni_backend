@@ -37,8 +37,9 @@ export class UsersService {
     });
   }
 
-  async findOneByEmail(email: string) {
-    return this.db.userinfo.findUnique({
+  async findOneByEmail(email: string | undefined | null) {
+    if(!email) return null;
+    return this.db.userinfo.findFirst({
       where: { email },
     });
   }
