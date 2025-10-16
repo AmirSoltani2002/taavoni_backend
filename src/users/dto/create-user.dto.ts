@@ -7,7 +7,6 @@ import {
   IsNumber,
   Min,
   IsEmail,
-  IsNotEmpty,
   IsOptional,
   IsBoolean,
 } from 'class-validator';
