@@ -23,7 +23,7 @@ model userinfo {
   homePhone String?
   mobile String?
   workPhone String?
-  email String @unique
+  email String?
   nationalNumber String @unique
   type  TYPE?
   password String

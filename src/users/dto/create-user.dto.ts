@@ -34,7 +34,8 @@ export class CreateUserDto {
   @IsOptional()
   workPhone?: string;
   @IsEmail()
-  email: string;
+  @IsOptional()
+  email?: string;
   @IsString()
   nationalNumber: string;
   @IsEnum(TYPE)
