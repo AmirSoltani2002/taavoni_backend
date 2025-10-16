@@ -18,14 +18,14 @@ model userinfo {
   name  String
   lastName  String
   sex   SEX
-  birthDay  DateTime
-  address String
-  homePhone String
-  mobile String
-  workPhone String
+  birthDay  DateTime?
+  address String?
+  homePhone String?
+  mobile String?
+  workPhone String?
   email String @unique
   nationalNumber String @unique
-  type  TYPE
+  type  TYPE?
   password String
   userDocs userDoc[]
   subProjects subProject[]

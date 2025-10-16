@@ -9,9 +9,9 @@ import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
-  IsStrongPassword,
   IsBoolean,
 } from 'class-validator';
+
 export class CreateUserDto {
   @IsString()
   name: string;
@@ -23,19 +23,24 @@ export class CreateUserDto {
   sex: SEX;
   @IsDate()
   @IsNotEmpty()
-  birthDay: Date;
+  @IsOptional()
+  birthDay?: Date;
   @IsString()
   @IsNotEmpty()
-  address: string;
+  @IsOptional()
+  address?: string;
   @IsPhoneNumber('IR')
   @IsNotEmpty()
-  homePhone: string;
+  @IsOptional()
+  homePhone?: string;
   @IsPhoneNumber('IR')
   @IsNotEmpty()
-  mobile: string;
+  @IsOptional()
+  mobile?: string;
   @IsPhoneNumber('IR')
   @IsNotEmpty()
-  workPhone: string;
+  @IsOptional()
+  workPhone?: string;
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -44,9 +49,10 @@ export class CreateUserDto {
   nationalNumber: string;
   @IsEnum(TYPE)
   @IsNotEmpty()
-  type: TYPE;
+  @IsOptional()
+  type?: TYPE;
   @IsString()
-  @IsStrongPassword()
+  @IsNotEmpty()
   password: string;
   @IsEnum(ISARGARIPERCENT)
   @IsOptional()
