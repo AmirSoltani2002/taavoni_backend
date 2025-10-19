@@ -32,17 +32,17 @@ export class UsersController {
     const {accepted, ...rest} = createUserDto;
     rest.password = await PasswordService.hashPassword(rest.password);
     const user =  await this.usersService.create(rest);
-    const ticketBody = {
-      userId: user.id,
-      type: 'signup',
-    };
-    const ticket = await this.otherTicketsService.create(ticketBody);
-    const chatBody = {
-      senderId: user.id,
-      ticketId: ticket.id,
-      message: `من، ${user.name} ${user.lastName} با کدملی ${user.nationalNumber}، درخواست ثبتنام در سیستم تعاونی مسکن شماره سه کارکنان دانشگاه تهران را دارم.`
-    };
-    const _chat = await this.otherChatsService.create(chatBody);
+    // const ticketBody = {
+    //   userId: user.id,
+    //   type: 'signup',
+    // };
+    // const ticket = await this.otherTicketsService.create(ticketBody);
+    // const chatBody = {
+    //   senderId: user.id,
+    //   ticketId: ticket.id,
+    //   message: `من، ${user.name} ${user.lastName} با کدملی ${user.nationalNumber}، درخواست ثبتنام در سیستم تعاونی مسکن شماره سه کارکنان دانشگاه تهران را دارم.`
+    // };
+    // const _chat = await this.otherChatsService.create(chatBody);
     return user;
   }
 
