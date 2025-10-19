@@ -11,7 +11,7 @@ export class OtherTicketsService {
     const {userId, recieverId, ...rest} = createOtherTicketDto;
     return this.db.otherTicket.create({ data: {
       user: { connect: { id: userId } },
-      reciever: { connect: { id: recieverId } },
+      reciever: recieverId ? { connect: { id: recieverId } } : undefined,
       ...rest
     } });
   }
