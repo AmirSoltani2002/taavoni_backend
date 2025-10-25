@@ -53,6 +53,13 @@ export class ProjectsService {
       return this.db.project.findUniqueOrThrow({
         where: {
           id: id,
+        },
+        include: {
+          blocks: {
+            include: {
+              subProjects: true
+            }
+          }
         }
       })
     } catch(_error) {
