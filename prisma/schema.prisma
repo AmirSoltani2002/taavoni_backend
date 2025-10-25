@@ -81,6 +81,8 @@ model project {
   landArea  Int
   startDate DateTime
   endDate DateTime?
+  longitude Float
+  latitude Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   blocks block[]

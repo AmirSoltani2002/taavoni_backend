@@ -11,4 +11,8 @@ export class CreateProjectDto {
     startDate: Date;
     @IsDate()
     endDate: Date;
+    @IsNumber()
+    longitude: number;
+    @IsNumber()
+    latitude: number;
 }
