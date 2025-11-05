@@ -17,10 +17,15 @@ import { UpdateProjectDocDto } from './dto/update-project-doc.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Roles } from 'src/auth/roles.decorator';
+import * as fs from 'fs';
 
-@Controller('project-docs')
+const uploadPath = './uploads/projectdocs/';
 export class ProjectDocsController {
-  constructor(private readonly projectDocsService: ProjectDocsService) {}
+  constructor(private readonly projectDocsService: ProjectDocsService) {
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+  }
 
   /**
    * Create a new Project Document with file upload
@@ -28,7 +33,7 @@ export class ProjectDocsController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './uploads/projectdocs/',
+        destination: uploadPath,
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
           callback(null, `${uniqueSuffix}-${file.originalname}`);
@@ -40,15 +45,20 @@ export class ProjectDocsController {
     }),
   )
   @Post()
-  create(
+  async create(
     @Body() createProjectDocDto: CreateProjectDocDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) {
       throw new BadRequestException('No File is Sent');
     }
-    createProjectDocDto.document = `/uploads/projectdocs/${file.filename}`;
-    return this.projectDocsService.create(createProjectDocDto);
+    createProjectDocDto.document = `${file.filename}`;
+    const res =  this.projectDocsService.create(createProjectDocDto);
+    try {
+      return await res;
+    } catch (error) {
+      throw new BadRequestException('Failed to create Project Document');
+    }
   }
 
   /**
@@ -85,7 +95,7 @@ export class ProjectDocsController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './uploads/projectdocs/',
+        destination: uploadPath,
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
           callback(null, `${uniqueSuffix}-${file.originalname}`);
@@ -98,7 +108,7 @@ export class ProjectDocsController {
   )
   @Roles(['admin', 'system'])
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateProjectDocDto: UpdateProjectDocDto,
     @UploadedFile() file?: Express.Multer.File,
@@ -106,7 +116,12 @@ export class ProjectDocsController {
     if (file) {
       updateProjectDocDto.document = `/uploads/projectdocs/${file.filename}`;
     }
-    return this.projectDocsService.update(+id, updateProjectDocDto);
+    const res = this.projectDocsService.update(+id, updateProjectDocDto);
+    try {
+      return await res;
+    } catch (error) {
+      throw new BadRequestException('Failed to update Project Document');
+    }
   }
 
   /**
