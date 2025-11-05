@@ -1,9 +1,7 @@
-import { Injectable, UseInterceptors } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProjectDocDto } from './dto/create-project-doc.dto';
 import { UpdateProjectDocDto } from './dto/update-project-doc.dto';
 import { DatabaseService } from 'src/database/database.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 
 @Injectable()
 export class ProjectDocsService {
@@ -32,7 +30,8 @@ export class ProjectDocsService {
   }
 
   findOne(id: number) {
-    return this.db.projectDoc.findUnique({ where: { id } });
+    console.log('Finding ProjectDoc with id:', id);
+    return this.db.projectDoc.findUniqueOrThrow({ where: { id } });
   }
 
   update(id: number, updateProjectDocDto: UpdateProjectDocDto) {

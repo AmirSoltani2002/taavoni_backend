@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   BadRequestException,
   UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { SubProjectDocsService } from './sub-project-docs.service';
 import { CreateSubProjectDocDto } from './dto/create-sub-project-doc.dto';
@@ -17,10 +18,19 @@ import { UpdateSubProjectDocDto } from './dto/update-sub-project-doc.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Roles } from 'src/auth/roles.decorator';
+import * as fs from 'fs';
+import * as path from 'path';
+import type { Response } from 'express';
 
+const uploadPath = './uploads/subprojectdocs/';
+@Roles(['admin', 'system'])
 @Controller('sub-project-docs')
 export class SubProjectDocsController {
-  constructor(private readonly subProjectDocsService: SubProjectDocsService) {}
+  constructor(private readonly subProjectDocsService: SubProjectDocsService) {
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+  }
 
   /**
    * Create SubProjectDoc with File Upload
@@ -28,7 +38,7 @@ export class SubProjectDocsController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './uploads/subprojectdocs/',
+        destination: uploadPath,
         filename: (req, file, callback) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -52,7 +62,19 @@ export class SubProjectDocsController {
     return this.subProjectDocsService.create(createSubProjectDocDto);
   }
 
-  @Roles(['admin', 'system'])
+  @Roles(['admin', 'system', 'free', 'tehranUni', 'otherUni', 'employee'])
+  @Get('download/:fileId')
+  async downloadFile(@Param('fileId') fileId: number, @Res() res: Response) {
+    const subProjectDoc = await this.subProjectDocsService.findOne(fileId);
+    const filePath = path.join(uploadPath, subProjectDoc.document);
+    res.download(filePath, (err) => {
+      if (err) {
+        console.log(err);
+        res.status(404).send('File not found');
+      }
+    });
+  }
+
   @Get('subproject/:id')
   findAllBySubProject(@Param('id') id: string, @Query('detail') detail?: string) {
     return this.subProjectDocsService.findAllBySubProject(+id, detail);
@@ -60,7 +82,7 @@ export class SubProjectDocsController {
   /**
    * Get all SubProjectDocs
    */
-  @Roles(['admin', 'system'])
+
   @Get()
   findAll(@Query('detail') detail?: string) {
     return this.subProjectDocsService.findAll(detail);
@@ -69,7 +91,7 @@ export class SubProjectDocsController {
   /**
    * Get a single SubProjectDoc by ID
    */
-  @Roles(['admin', 'system'])
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.subProjectDocsService.findOne(+id);
@@ -85,7 +107,7 @@ export class SubProjectDocsController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './uploads/subprojectdocs/',
+        destination: uploadPath,
         filename: (req, file, callback) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -97,7 +119,7 @@ export class SubProjectDocsController {
       },
     }),
   )
-  @Roles(['admin', 'system'])
+
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -113,9 +135,11 @@ export class SubProjectDocsController {
   /**
    * Delete SubProjectDoc by ID
    */
-  @Roles(['admin', 'system'])
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.subProjectDocsService.remove(+id);
   }
+
+  
 }

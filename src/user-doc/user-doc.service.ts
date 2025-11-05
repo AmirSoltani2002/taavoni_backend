@@ -34,7 +34,7 @@ export class UserDocService {
 
 
   findOne(id: number) {
-    return this.db.userDoc.findUnique({
+    return this.db.userDoc.findUniqueOrThrow({
       where: {id},
       include: {user: true}
     })

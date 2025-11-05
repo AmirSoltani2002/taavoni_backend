@@ -36,7 +36,7 @@ export class SubProjectDocsService {
   }
 
   findOne(id: number) {
-    return this.db.subProjectDoc.findUnique({
+    return this.db.subProjectDoc.findUniqueOrThrow({
       where: { id }
     });
   }

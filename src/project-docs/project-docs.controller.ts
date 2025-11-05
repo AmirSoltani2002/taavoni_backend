@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   BadRequestException,
   UploadedFile,
+  Res,
 } from '@nestjs/common';
 import { ProjectDocsService } from './project-docs.service';
 import { CreateProjectDocDto } from './dto/create-project-doc.dto';
@@ -18,8 +19,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Roles } from 'src/auth/roles.decorator';
 import * as fs from 'fs';
+import * as path from 'path';
+import type { Response } from 'express';
 
-const uploadPath = './uploads/projectdocs/';
+const uploadPath = path.join(process.cwd(), 'uploads', 'projectdocs');
+@Roles(['admin', 'system'])
 @Controller('project-docs')
 export class ProjectDocsController {
   constructor(private readonly projectDocsService: ProjectDocsService) {
@@ -61,6 +65,7 @@ export class ProjectDocsController {
       const res = await this.projectDocsService.create(createProjectDocDto);
       return res;
     } catch (error) {
+      console.log(error);
       throw new BadRequestException('Failed to create Project Document');
     }
   }
@@ -68,7 +73,21 @@ export class ProjectDocsController {
   /**
    * Get all Project Documents
    */
-  @Roles(['admin', 'system'])
+
+  @Roles(['admin', 'system', 'free', 'tehranUni', 'otherUni', 'employee'])
+  @Get('download/:fileId')
+  async downloadFile(@Param('fileId') fileId: number, @Res() res: Response) {
+    console.log('Downloading file with id:', fileId);
+    const fileDoc = await this.projectDocsService.findOne(fileId);
+    const filePath = path.join(uploadPath, fileDoc.document);
+    res.download(filePath, (err) => {
+      if (err) {
+        console.log(err);
+        res.status(404).send('File not found');
+      }
+    });
+  }
+  
   @Get()
   findAll(@Query('detail') detail?: string) {
     return this.projectDocsService.findAll(detail);
@@ -77,7 +96,6 @@ export class ProjectDocsController {
   /**
    * Get a single Project Document by ID
    */
-  @Roles(['admin', 'system'])
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.projectDocsService.findOne(+id);
@@ -86,7 +104,6 @@ export class ProjectDocsController {
   /**
    * Get all documents for a specific Project
    */
-  @Roles(['admin', 'system'])
   @Get('project/:id')
   findAllByProject(@Param('id') id: string, @Query('detail') detail?: string) {
     return this.projectDocsService.findAllByProject(+id, detail);
@@ -110,7 +127,7 @@ export class ProjectDocsController {
       },
     }),
   )
-  @Roles(['admin', 'system'])
+  
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -131,9 +148,10 @@ export class ProjectDocsController {
   /**
    * Delete a Project Document
    */
-  @Roles(['admin', 'system'])
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.projectDocsService.remove(+id);
   }
+
+
 }

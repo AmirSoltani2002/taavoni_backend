@@ -1,14 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseInterceptors, BadRequestException, UploadedFile, Query} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseInterceptors, BadRequestException, UploadedFile, Query, Res} from '@nestjs/common';
 import { UserDocService } from './user-doc.service';
 import { CreateUserDocDto } from './dto/create-user-doc.dto';
 import { UpdateUserDocDto } from './dto/update-user-doc.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import * as fs from 'fs';
+import * as path from 'path';
+import type {Response} from "express";
 
+const uploadPath = './uploads/userdocs/';
 @Controller('user-doc')
 export class UserDocController {
-  constructor(private readonly userDocService: UserDocService) {}
+  constructor(private readonly userDocService: UserDocService) {
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+  }
 
   @UseInterceptors()
   @Get('profile')
@@ -19,7 +27,7 @@ export class UserDocController {
   @UseInterceptors(
       FileInterceptor('file', {
         storage: diskStorage({
-          destination: './uploads/userdocs/',
+          destination: uploadPath,
           filename: (req, file, callback) => {
             const uniqueSuffix =
               Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -85,6 +93,21 @@ export class UserDocController {
     return this.userDocService.create(createUserDocDto);
   }
 
+  @Get('download/:fileId')
+  async downloadFile(@Param('fileId') fileId: number, @Res() res: Response, @Request() req) {
+    const createUserDocDto = await this.userDocService.findOne(fileId);
+    const filePath = path.join(uploadPath, createUserDocDto.document);
+    if(req['user'].id !== createUserDocDto.userId && !['admin', 'system'].includes(req['user'].type)){
+      throw new BadRequestException("You can only upload document for yourself");
+    }
+    res.download(filePath, (err) => {
+      if (err) {
+        console.log(err);
+        res.status(404).send('File not found');
+      }
+    });
+  }
+
   @Roles(['admin', 'system'])
   @Get()
   findAll(@Query('detail') detail?: string) {
@@ -101,7 +124,7 @@ export class UserDocController {
   @UseInterceptors(
       FileInterceptor('file', {
         storage: diskStorage({
-          destination: './uploads/userdocs/',
+          destination: uploadPath,
           filename: (req, file, callback) => {
             const uniqueSuffix =
               Date.now() + '-' + Math.round(Math.random() * 1e9);
