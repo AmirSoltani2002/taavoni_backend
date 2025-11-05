@@ -20,6 +20,7 @@ import { Roles } from 'src/auth/roles.decorator';
 import * as fs from 'fs';
 
 const uploadPath = './uploads/projectdocs/';
+@Controller('project-docs')
 export class ProjectDocsController {
   constructor(private readonly projectDocsService: ProjectDocsService) {
     if (!fs.existsSync(uploadPath)) {
