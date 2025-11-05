@@ -41,6 +41,9 @@ export class ProjectDocsController {
         },
       }),
       fileFilter: (req, file, callback) => {
+        if (!file || !file.originalname) {
+          return callback(new Error('Invalid file'), false);
+        }
         callback(null, true);
       },
     }),
@@ -54,9 +57,9 @@ export class ProjectDocsController {
       throw new BadRequestException('No File is Sent');
     }
     createProjectDocDto.document = `${file.filename}`;
-    const res =  this.projectDocsService.create(createProjectDocDto);
     try {
-      return await res;
+      const res = await this.projectDocsService.create(createProjectDocDto);
+      return res;
     } catch (error) {
       throw new BadRequestException('Failed to create Project Document');
     }
