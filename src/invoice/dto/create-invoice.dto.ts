@@ -16,7 +16,8 @@ export class CreateInvoiceDto {
     number?: string;
 
     @IsString()
-    document: string;
+    @IsOptional()
+    document?: string;
 
     @IsString()
     @IsOptional()

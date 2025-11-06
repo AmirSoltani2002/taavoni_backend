@@ -8,10 +8,12 @@ export class TransactionService {
   constructor(private readonly db: DatabaseService) {}
 
   create(createTransactionDto: CreateTransactionDto) {
-    const {userId, subProjectId, ...rest} = createTransactionDto;
+    const {userId, subProjectId, document, ...rest} = createTransactionDto;
+    const doc = document as string;
     return this.db.transaction.create({
       data: {
         ...rest,
+        document: doc,
         user: { connect: { id: userId } },
         subProject: { connect: { id: subProjectId } },
       }

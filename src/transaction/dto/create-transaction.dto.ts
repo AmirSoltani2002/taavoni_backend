@@ -14,7 +14,8 @@ export class CreateTransactionDto {
     number: string;
 
     @IsString()
-    document: string;
+    @IsOptional()
+    document?: string;
 
     @IsNumber()
     amount: number;

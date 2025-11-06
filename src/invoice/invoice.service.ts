@@ -7,13 +7,18 @@ import { DatabaseService } from 'src/database/database.service';
 export class InvoiceService {
   constructor(private readonly db: DatabaseService) {}
   create(createInvoiceDto: CreateInvoiceDto) {
-    const {userId, subProjectId, ...rest} = createInvoiceDto;
+    const {userId, subProjectId, ...resti} = createInvoiceDto;
+    const rest = resti as {
+      amount?: number;
+      number?: string;
+      document: string;
+    }
     return this.db.invoice.create({
-      data: {
+      data:{
         ...rest,
         user: {connect: {id: userId}},
         subProject: {connect: {id: subProjectId}},
-      },
+      }
     });
   }
 
