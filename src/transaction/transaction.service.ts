@@ -20,17 +20,21 @@ export class TransactionService {
 
   findManyByUserID(userId: number) {
     return this.db.transaction.findMany({
-      where: { userId }
+      where: { userId },
+      include: { subProject: true, user: true }
     });
   }
 
   findAll() {
-    return this.db.transaction.findMany();
+    return this.db.transaction.findMany({
+      include: { subProject: true, user: true }
+    });
   }
 
   findOne(id: number) {
     return this.db.transaction.findUniqueOrThrow({
-      where: { id }
+      where: { id },
+      include: { subProject: true, user: true }
     });
   }
 

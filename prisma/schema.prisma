@@ -148,9 +148,8 @@ model invoice {
   userId  Int
   subProject subProject @relation(fields: [subProjectId], references: [id])
   subProjectId Int
-  amount  Float
-  bank  String
-  number  String
+  amount  Float?
+  number  String?
   document  String
   detail  String?
   createdAt DateTime @default(now())

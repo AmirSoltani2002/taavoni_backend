@@ -19,12 +19,19 @@ export class SubprojectsService {
   }
 
   findAll() {
-    return this.db.subProject.findMany()
+    return this.db.subProject.findMany({
+      include: {
+        block: { include: { project: true } }
+      }
+    })
   }
 
   findAllByUser(id: number) {
     return this.db.subProject.findMany({
-      where: {userId: id}
+      where: {userId: id},
+      include: {
+        block: { include: { project: true } }
+      }
     })
   }
 
@@ -33,6 +40,9 @@ export class SubprojectsService {
       return this.db.subProject.findUniqueOrThrow({
         where: {
           id: id,
+        },
+        include: {
+          block: { include: { project: true } }
         }
       })
     } catch(_error) {
