@@ -27,7 +27,7 @@ export class UsersService {
 
   async findOne(id: number) {
     return this.db.userinfo.findUnique({
-      where: { id },
+      where: { id }
     });
   }
 

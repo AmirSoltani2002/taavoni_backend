@@ -31,10 +31,12 @@ model userinfo {
   subProjects subProject[]
   subProjectTickets subProjectTicket[]
   subProjectChat subProjectChat[]
+  invoices invoice[]
   otherChats otherChat[]
   otherTicketsReciever otherTicket[] @relation("recieverRelation")
   otherTicketsUser otherTicket[] @relation("userRelation")
   isargaryPercent  ISARGARIPERCENT?
+  transactions transaction[]
   azadeEsaratMonths Int?
   azadeMonths Int?
   shahedFamilyNumber Int?
@@ -117,8 +119,40 @@ model subProject {
   block block @relation(fields: [blockId], references: [id])
   blockId Int
   posts post[]
+  transaction transaction[]
+  invoice invoice[]
   subProjectTickets subProjectTicket[]
   subProjectDocs  subProjectDoc[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model transaction {
+  id  Int @id @default(autoincrement())
+  user  userinfo @relation(fields: [userId], references: [id])
+  userId  Int
+  subProject subProject @relation(fields: [subProjectId], references: [id])
+  subProjectId Int
+  amount  Float
+  bank  String
+  number  String
+  document  String
+  detail  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model invoice {
+  id  Int @id @default(autoincrement())
+  user  userinfo @relation(fields: [userId], references: [id])
+  userId  Int
+  subProject subProject @relation(fields: [subProjectId], references: [id])
+  subProjectId Int
+  amount  Float
+  bank  String
+  number  String
+  document  String
+  detail  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
