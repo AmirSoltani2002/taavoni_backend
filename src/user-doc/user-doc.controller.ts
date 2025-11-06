@@ -139,7 +139,7 @@ export class UserDocController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDocDto: UpdateUserDocDto, @UploadedFile() file?: Express.Multer.File) {
     if(file){
-      updateUserDocDto.document = `/uploads/userdocs/${file?.filename}`;
+      updateUserDocDto.document = `${file?.filename}`;
     }
     return this.userDocService.update(+id, updateUserDocDto);
   }

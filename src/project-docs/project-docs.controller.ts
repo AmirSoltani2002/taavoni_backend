@@ -127,7 +127,6 @@ export class ProjectDocsController {
       },
     }),
   )
-  
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -135,7 +134,7 @@ export class ProjectDocsController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     if (file) {
-      updateProjectDocDto.document = `/uploads/projectdocs/${file.filename}`;
+      updateProjectDocDto.document = `${file.filename}`;
     }
     const res = this.projectDocsService.update(+id, updateProjectDocDto);
     try {

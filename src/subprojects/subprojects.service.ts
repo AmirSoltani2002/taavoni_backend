@@ -2,10 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubprojectDto } from './dto/create-subproject.dto';
 import { UpdateSubprojectDto } from './dto/update-subproject.dto';
 import { DatabaseService } from 'src/database/database.service';
+import { TransactionHistoryService } from 'src/transaction-history/transaction-history.service';
 
 @Injectable()
 export class SubprojectsService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly db: DatabaseService, private readonly transactionHistoryService: TransactionHistoryService) {}
   
   async create(createSubproject: CreateSubprojectDto) {
     const {blockId, userId, ...rest} = createSubproject;
@@ -53,6 +54,9 @@ export class SubprojectsService {
   async update(id: number, updateSubproject: UpdateSubprojectDto) {
     const _record = await this.findOne(id);
     const {blockId, userId, ...rest} = updateSubproject;
+    if(userId !== undefined && _record.userId !== null) {
+      await this.transactionHistoryService.create({userId: _record.userId, subProjectId: id});
+    }
     return this.db.subProject.update({
       where: {id},
       data: {

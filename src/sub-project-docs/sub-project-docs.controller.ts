@@ -127,7 +127,7 @@ export class SubProjectDocsController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     if (file) {
-      updateSubProjectDocDto.document = `/uploads/subprojectdocs/${file.filename}`;
+      updateSubProjectDocDto.document = `${file.filename}`;
     }
     return this.subProjectDocsService.update(+id, updateSubProjectDocDto);
   }

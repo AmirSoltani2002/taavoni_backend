@@ -28,6 +28,7 @@ model userinfo {
   type  TYPE?
   password String
   userDocs userDoc[]
+  transactionHistory  transactionHistory[]
   subProjects subProject[]
   subProjectTickets subProjectTicket[]
   subProjectChat subProjectChat[]
@@ -120,9 +121,20 @@ model subProject {
   blockId Int
   posts post[]
   transaction transaction[]
+  transactionHistory transactionHistory[]
   invoice invoice[]
   subProjectTickets subProjectTicket[]
   subProjectDocs  subProjectDoc[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model transactionHistory {
+  id  Int @id @default(autoincrement())
+  subProject  subProject @relation(fields: [subProjectId], references: [id])
+  subProjectId  Int
+  user  userinfo @relation(fields: [userId], references: [id])
+  userId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
