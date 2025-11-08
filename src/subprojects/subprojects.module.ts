@@ -7,5 +7,6 @@ import { TransactionHistoryModule } from 'src/transaction-history/transaction-hi
   imports: [TransactionHistoryModule],
   controllers: [SubprojectsController],
   providers: [SubprojectsService],
+  exports: [SubprojectsService],
 })
 export class SubprojectsModule {}
