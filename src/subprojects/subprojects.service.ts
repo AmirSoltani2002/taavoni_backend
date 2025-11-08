@@ -62,7 +62,7 @@ export class SubprojectsService {
       data: {
         ...rest,
         block: blockId ? {connect: {id: blockId}} : undefined,
-        user: userId ? {connect: {id: userId}} : undefined,
+        user: userId ? {connect: {id: userId}} : userId === null ? {disconnect: true} : undefined,
       },
     })
   }

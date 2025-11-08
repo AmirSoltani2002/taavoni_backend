@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UnauthorizedException, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Res, Delete, Request, UnauthorizedException, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
@@ -6,6 +6,7 @@ import { Roles } from 'src/auth/roles.decorator';
 import * as fs from 'fs';
 import * as path from 'path';
 import { diskStorage } from 'multer';
+import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 const uploadPath = path.join(process.cwd(), 'uploads', 'invoices');
@@ -44,6 +45,21 @@ export class InvoiceController {
       createInvoiceDto.userId = req['user'].id;
     }
     return this.invoiceService.create(createInvoiceDto);
+  }
+
+  @Get('download/:fileId')
+  async downloadFile(@Param('fileId') fileId: number, @Res() res: Response, @Request() req) {
+    const invoice = await this.invoiceService.findOne(fileId);
+    const filePath = path.join(uploadPath, invoice.document);
+    if(req['user'].id !== invoice.userId && !['admin', 'system'].includes(req['user'].type)){
+      throw new BadRequestException("You can only upload document for yourself");
+    }
+    res.download(filePath, (err) => {
+      if (err) {
+        console.log(err);
+        res.status(404).send('File not found');
+      }
+    });
   }
 
   @Roles(['admin', 'system'])

@@ -10,7 +10,9 @@ import {
   UseInterceptors,
   BadRequestException,
   UploadedFile,
+  Request,
   Res,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ProjectDocsService } from './project-docs.service';
 import { CreateProjectDocDto } from './dto/create-project-doc.dto';
@@ -21,12 +23,13 @@ import { Roles } from 'src/auth/roles.decorator';
 import * as fs from 'fs';
 import * as path from 'path';
 import type { Response } from 'express';
+import { SubprojectsService } from 'src/subprojects/subprojects.service';
 
 const uploadPath = path.join(process.cwd(), 'uploads', 'projectdocs');
 @Roles(['admin', 'system'])
 @Controller('project-docs')
 export class ProjectDocsController {
-  constructor(private readonly projectDocsService: ProjectDocsService) {
+  constructor(private readonly projectDocsService: ProjectDocsService, private readonly subprojectsService: SubprojectsService) {
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
@@ -104,8 +107,16 @@ export class ProjectDocsController {
   /**
    * Get all documents for a specific Project
    */
+  @Roles(['admin', 'system', 'free', 'tehranUni', 'otherUni', 'employee'])
   @Get('project/:id')
-  findAllByProject(@Param('id') id: string, @Query('detail') detail?: string) {
+  async findAllByProject(@Param('id') id: string, @Request() req, @Query('detail') detail?: string) {
+    const subprojects = await this.subprojectsService.findAllByUser(req['user'].id);
+    if(!['admin', 'system'].includes(req['user'].type)) {
+      const hasAccess = subprojects.some(sp => sp.block.projectId === +id);
+      if (!hasAccess) {
+        throw new UnauthorizedException('You do not have access to this project');
+      }
+    }
     return this.projectDocsService.findAllByProject(+id, detail);
   }
 
