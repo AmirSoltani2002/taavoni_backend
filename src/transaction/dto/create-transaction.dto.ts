@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateTransactionDto {
     @IsNumber()
@@ -19,6 +19,9 @@ export class CreateTransactionDto {
 
     @IsNumber()
     amount: number;
+
+    @IsString()
+    targetBank: string;
 
     @IsString()
     @IsOptional()

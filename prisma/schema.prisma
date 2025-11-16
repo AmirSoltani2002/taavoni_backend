@@ -144,9 +144,11 @@ model transaction {
   user  userinfo @relation(fields: [userId], references: [id])
   userId  Int
   subProject subProject @relation(fields: [subProjectId], references: [id])
+  isConfirmed Boolean @default(false)
   subProjectId Int
   amount  Float
   bank  String
+  targetBank  String
   number  String
   document  String
   detail  String?

@@ -24,6 +24,19 @@ export class UserDocController {
     return this.userDocService.findAllByUser(+req['user'].id, detail);
   }
 
+  @Get('download/:fileId')
+  async downloadFile(@Param('fileId') fileId: number, @Res() res: Response) {
+    console.log('Downloading file with id:', fileId);
+    const fileDoc = await this.userDocService.findOne(fileId);
+    const filePath = path.join(uploadPath, fileDoc.document);
+    res.download(filePath, (err) => {
+      if (err) {
+        console.log(err);
+        res.status(404).send('File not found');
+      }
+    });
+  }
+
   @UseInterceptors(
       FileInterceptor('file', {
         storage: diskStorage({
@@ -91,21 +104,6 @@ export class UserDocController {
       throw new BadRequestException("You can only upload document for yourself");
     }
     return this.userDocService.create(createUserDocDto);
-  }
-
-  @Get('download/:fileId')
-  async downloadFile(@Param('fileId') fileId: number, @Res() res: Response, @Request() req) {
-    const createUserDocDto = await this.userDocService.findOne(fileId);
-    const filePath = path.join(uploadPath, createUserDocDto.document);
-    if(req['user'].id !== createUserDocDto.userId && !['admin', 'system'].includes(req['user'].type)){
-      throw new BadRequestException("You can only upload document for yourself");
-    }
-    res.download(filePath, (err) => {
-      if (err) {
-        console.log(err);
-        res.status(404).send('File not found');
-      }
-    });
   }
 
   @Roles(['admin', 'system'])

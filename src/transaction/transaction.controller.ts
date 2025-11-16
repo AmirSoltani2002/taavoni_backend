@@ -112,6 +112,9 @@ export class TransactionController {
     if(!['admin', 'system'].includes(req['user'].type) || req['user'].id !== userId){
       throw new UnauthorizedException();
     }
+    if(updateTransactionDto?.isConfirmed !== undefined && !['admin', 'system'].includes(req['user'].type)){
+      throw new UnauthorizedException("Only admin or system can change confirmation status");
+    }
     if(updateTransactionDto.userId && !['admin', 'system'].includes(req['user'].type)){
       updateTransactionDto.userId = req['user'].id;
     }
