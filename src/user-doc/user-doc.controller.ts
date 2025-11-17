@@ -37,39 +37,6 @@ export class UserDocController {
     });
   }
 
-  @UseInterceptors(
-      FileInterceptor('file', {
-        storage: diskStorage({
-          destination: uploadPath,
-          filename: (req, file, callback) => {
-            const uniqueSuffix =
-              Date.now() + '-' + Math.round(Math.random() * 1e9);
-            callback(null, `${uniqueSuffix}-${file.originalname}`);
-          },
-        }),
-        fileFilter: (req, file, callback) => {
-          callback(null, true);
-        },
-      }),
-  )
-  @Patch('profile')
-  updateMy(
-    detail: string,
-    @Body() updateUserDocDto: UpdateUserDocDto,
-    @Request() req,
-    @UploadedFile() file?: Express.Multer.File,
-  ) {
-    if(file){
-      updateUserDocDto.document = `${file?.filename}`;
-    }
-    return this.userDocService.updateByUser(+req['user'].id, updateUserDocDto, detail);
-  }
-
-  @Delete('profile')
-  removeMy(detail: string, @Request() req) {
-    return this.userDocService.removeByUser(+req['user'].id, detail);
-  }
-
   @Roles(['admin', 'system'])
   @Get('user/:id')
   findAllByUser(@Param('id') id: string, @Query('detail') detail?: string) {
@@ -135,7 +102,10 @@ export class UserDocController {
       }),
   )
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDocDto: UpdateUserDocDto, @UploadedFile() file?: Express.Multer.File) {
+  update(@Param('id') id: string, @Body() updateUserDocDto: UpdateUserDocDto, @Request() req, @UploadedFile() file?: Express.Multer.File) {
+    if(+req['user'].id !== updateUserDocDto.userId && !['admin', 'system'].includes(req['user'].type)){
+      throw new BadRequestException("You can only update document for yourself");
+    }
     if(file){
       updateUserDocDto.document = `${file?.filename}`;
     }
@@ -144,7 +114,10 @@ export class UserDocController {
 
   @Roles(['admin', 'system'])
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userDocService.remove(+id);
+  remove(@Param('id') id: number, @Request() req) {
+    if(+req['user'].id !== id && !['admin', 'system'].includes(req['user'].type)){
+      throw new BadRequestException("You can only delete document for yourself");
+    }
+    return this.userDocService.remove(id);
   }
 }
