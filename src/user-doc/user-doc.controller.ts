@@ -60,7 +60,7 @@ export class UserDocController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     if(file){
-      updateUserDocDto.document = `/uploads/userdocs/${file?.filename}`;
+      updateUserDocDto.document = `${file?.filename}`;
     }
     return this.userDocService.updateByUser(+req['user'].id, updateUserDocDto, detail);
   }
@@ -99,7 +99,7 @@ export class UserDocController {
 ) {
     if(!file)
       throw new BadRequestException("No File is Sent");
-    createUserDocDto.document = `/uploads/userdocs/${file?.filename}`;
+    createUserDocDto.document = `${file?.filename}`;
     if(req['user'].id !== createUserDocDto.userId && !['admin', 'system'].includes(req['user'].type)){
       throw new BadRequestException("You can only upload document for yourself");
     }

@@ -58,7 +58,7 @@ export class SubProjectDocsController {
     if (!file) {
       throw new BadRequestException('No File is Sent');
     }
-    createSubProjectDocDto.document= `/uploads/subprojectdocs/${file.filename}`;
+    createSubProjectDocDto.document= `${file.filename}`;
     return this.subProjectDocsService.create(createSubProjectDocDto);
   }
 
