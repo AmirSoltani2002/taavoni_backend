@@ -1,18 +1,23 @@
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateProjectDto {
     @IsString()
     name: string;
     @IsNumber()
-    landArea: number;
+    @IsOptional()
+    landArea?: number;
     @IsString()
-    address: string;
+    @IsOptional()
+    address?: string;
     @IsDate()
     startDate: Date;
     @IsDate()
-    endDate: Date;
+    @IsOptional()
+    endDate?: Date;
     @IsNumber()
+    @IsOptional()
     longitude?: number;
     @IsNumber()
+    @IsOptional()
     latitude?: number;
 }
