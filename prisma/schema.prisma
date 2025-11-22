@@ -80,8 +80,8 @@ model subProjectDoc {
 model project {
   id  Int @id @default(autoincrement())
   name  String
-  address String
-  landArea  Int
+  address String?
+  landArea  Int?
   startDate DateTime
   endDate DateTime?
   longitude Float?
