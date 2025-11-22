@@ -29,7 +29,11 @@ export class TransactionService {
 
   findAll() {
     return this.db.transaction.findMany({
-      include: { subProject: true, user: true }
+      include: { subProject: {
+        include: { block: {
+          include: { project: true }
+        } }
+      }, user: true }
     });
   }
 
