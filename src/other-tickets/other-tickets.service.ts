@@ -45,11 +45,12 @@ export class OtherTicketsService {
     return this.db.otherTicket.findMany({ where: { id }, include: { chats: {orderBy: { createdAt: 'asc' }, include: {sender: true} }}  });
   }
   
-  findAllUser(id: number, queryType?: string) {
+  findAllUser(id: number | null, queryType?: string, open?: boolean) {
     return this.db.otherTicket.findMany({
       where: {
-        OR: [{ userId: id }, { recieverId: id }],
+        OR: id ? [{ userId: id }, { recieverId: id }] : undefined,
         ...(queryType ? { type: queryType } : {}),
+        ...(open !== undefined ? { closed: !open } : {}),
       },
       orderBy: { updatedAt: 'desc' },
       include: {
