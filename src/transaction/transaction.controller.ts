@@ -37,10 +37,9 @@ export class TransactionController {
   )
   @Post()
   create(@Body() createTransactionDto: CreateTransactionDto, @Request() req, @UploadedFile() file: Express.Multer.File) {
-    if (!file) {
-      throw new BadRequestException('No File is Sent');
+    if (file) {
+      createTransactionDto.document = `${file.filename}`;
     }
-    createTransactionDto.document = `${file.filename}`;
     if(!['admin', 'system'].includes(req['user'].type)){
       createTransactionDto.userId = req['user'].id;
     }
