@@ -25,6 +25,10 @@ export class ProjectsService {
     })
   }
 
+  findAllName() {
+    return this.db.project.findMany()
+  }
+
   findAvailable() {
     return this.db.project.findMany({
       where: {

@@ -19,6 +19,11 @@ export class ProjectsController {
     findAll() {
       return this.projectsService.findAll();
     }
+
+    @Get('all/name')
+    findAllName() {
+      return this.projectsService.findAllName();
+    }
   
     @Get('available')
     findAvailable() {
