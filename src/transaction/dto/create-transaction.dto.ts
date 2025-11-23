@@ -4,6 +4,10 @@ export class CreateTransactionDto {
     @IsNumber()
     userId: number;
 
+    @IsBoolean()
+    @IsOptional()
+    isConfirmed?: boolean;
+
     @IsNumber()
     subProjectId: number;
 
