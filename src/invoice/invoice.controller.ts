@@ -109,7 +109,7 @@ export class InvoiceController {
     }
     const fileExists = await this.invoiceService.findOne(+id);
     const userId = fileExists.userId;
-    if(!['admin', 'system'].includes(req['user'].type) || req['user'].id !== userId){
+    if(!['admin', 'system'].includes(req['user'].type) && req['user'].id !== userId){
       throw new UnauthorizedException();
     }
     if(updateInvoiceDto.userId && !['admin', 'system'].includes(req['user'].type)){
@@ -122,7 +122,7 @@ export class InvoiceController {
   async remove(@Param('id') id: string, @Request() req) {
     const file = await this.invoiceService.findOne(+id);
     const userId = file.userId;
-    if(!['admin', 'system'].includes(req['user'].type) || req['user'].id !== userId){
+    if(!['admin', 'system'].includes(req['user'].type) && req['user'].id !== userId){
       throw new UnauthorizedException();
     }
     return this.invoiceService.remove(+id);

@@ -127,7 +127,7 @@ export class TransactionController {
   async remove(@Param('id') id: string, @Request() req) {
     const file = await this.transactionService.findOne(+id);
     const userId = file.userId;
-    if(!['admin', 'system'].includes(req['user'].type) || req['user'].id !== userId){
+    if(!['admin', 'system'].includes(req['user'].type) && req['user'].id !== userId){
       throw new UnauthorizedException();
     }
     return this.transactionService.remove(+id);
