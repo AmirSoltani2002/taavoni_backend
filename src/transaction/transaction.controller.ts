@@ -49,7 +49,10 @@ export class TransactionController {
   @Get('download/:fileId')
   async downloadFile(@Param('fileId') fileId: number, @Res() res: Response, @Request() req) {
     const transaction = await this.transactionService.findOne(fileId);
-    const filePath = path.join(uploadPath, transaction.document);
+    if(!transaction?.document){
+      throw new BadRequestException("No document uploaded for this transaction");
+    }
+    const filePath = path.join(uploadPath, transaction?.document);
     if(req['user'].id !== transaction.userId && !['admin', 'system'].includes(req['user'].type)){
       throw new BadRequestException("You can only upload document for yourself");
     }
