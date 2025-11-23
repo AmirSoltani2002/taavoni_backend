@@ -9,7 +9,7 @@ export class CreateTransactionDto {
     isConfirmed?: boolean;
 
     @IsNumber()
-    subProjectId: number;
+    projectId: number;
 
     @IsString()
     bank: string;

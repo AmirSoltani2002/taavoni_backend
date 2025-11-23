@@ -89,6 +89,7 @@ model project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   blocks block[]
+  transaction transaction[]
   projectDocs projectDoc[]
 }
 
@@ -120,7 +121,6 @@ model subProject {
   block block @relation(fields: [blockId], references: [id])
   blockId Int
   posts post[]
-  transaction transaction[]
   transactionHistory transactionHistory[]
   invoice invoice[]
   subProjectTickets subProjectTicket[]
@@ -143,9 +143,9 @@ model transaction {
   id  Int @id @default(autoincrement())
   user  userinfo @relation(fields: [userId], references: [id])
   userId  Int
-  subProject subProject @relation(fields: [subProjectId], references: [id])
+  project  project @relation(fields: [projectId], references: [id])
   isConfirmed Boolean @default(false)
-  subProjectId Int
+  projectId Int
   amount  Float
   bank  String
   targetBank  String
