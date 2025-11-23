@@ -109,7 +109,7 @@ export class TransactionController {
     }
     const existingFile = await this.transactionService.findOne(+id);
     const userId = existingFile.userId;
-    if(!['admin', 'system'].includes(req['user'].type) || req['user'].id !== userId){
+    if(!['admin', 'system'].includes(req['user'].type) && req['user'].id !== userId){
       throw new UnauthorizedException();
     }
     if(updateTransactionDto?.isConfirmed !== undefined && !['admin', 'system'].includes(req['user'].type)){
