@@ -18,7 +18,7 @@ export class OtherTicketsController {
   @UseInterceptors()
   @Get('profile')
   findAllUser(@Request() req, @Query('type') type?: string) {
-    return this.otherTicketsService.findAllUser(req['user'].id, type);
+    return this.otherTicketsService.findAllUser(['system', 'admin'].includes(req['user'].type) ? null : req['user'].id, type);
   }
 
   @Get('chat/:id')
