@@ -43,6 +43,9 @@ export class TransactionController {
     if(!['admin', 'system'].includes(req['user'].type)){
       createTransactionDto.userId = req['user'].id;
     }
+    if(createTransactionDto?.isConfirmed !== undefined && !['admin', 'system'].includes(req['user'].type)){
+      throw new UnauthorizedException("Only admin or system can change confirmation status");
+    }
     return this.transactionService.create(createTransactionDto);
   }
 
