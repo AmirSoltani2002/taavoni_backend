@@ -49,7 +49,7 @@ model userinfo {
 
 model userDoc {
   id  Int @id @default(autoincrement())
-  user  userinfo @relation(fields: [userId], references: [id])
+  user  userinfo @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
   document String
   detail String?
@@ -59,7 +59,7 @@ model userDoc {
 
 model projectDoc {
   id  Int @id @default(autoincrement())
-  project  project @relation(fields: [projectId], references: [id])
+  project  project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId  Int
   document String
   detail String?
@@ -69,7 +69,7 @@ model projectDoc {
 
 model subProjectDoc {
   id  Int @id @default(autoincrement())
-  subProject  subProject @relation(fields: [subProjectId], references: [id])
+  subProject  subProject @relation(fields: [subProjectId], references: [id], onDelete: Cascade)
   subProjectId  Int
   document String
   detail String?
@@ -101,7 +101,7 @@ model block {
   buildingArea Int
   description String?
   projectId Int
-  project project @relation(fields: [projectId], references: [id])
+  project project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   subProjects subProject[]
@@ -116,9 +116,9 @@ model subProject {
   options String?
   direction String
   unitNumber  Int @default(0)
-  user userinfo? @relation(fields: [userId], references: [id])
+  user userinfo? @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId  Int?
-  block block @relation(fields: [blockId], references: [id])
+  block block @relation(fields: [blockId], references: [id], onDelete: Cascade)
   blockId Int
   posts post[]
   transactionHistory transactionHistory[]
@@ -131,9 +131,9 @@ model subProject {
 
 model transactionHistory {
   id  Int @id @default(autoincrement())
-  subProject  subProject @relation(fields: [subProjectId], references: [id])
+  subProject  subProject @relation(fields: [subProjectId], references: [id], onDelete: Cascade)
   subProjectId  Int
-  user  userinfo @relation(fields: [userId], references: [id])
+  user  userinfo @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -141,9 +141,9 @@ model transactionHistory {
 
 model transaction {
   id  Int @id @default(autoincrement())
-  user  userinfo @relation(fields: [userId], references: [id])
+  user  userinfo @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
-  project  project @relation(fields: [projectId], references: [id])
+  project  project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   isConfirmed Boolean @default(false)
   projectId Int
   amount  Float
@@ -158,9 +158,9 @@ model transaction {
 
 model invoice {
   id  Int @id @default(autoincrement())
-  user  userinfo @relation(fields: [userId], references: [id])
+  user  userinfo @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
-  subProject subProject @relation(fields: [subProjectId], references: [id])
+  subProject subProject @relation(fields: [subProjectId], references: [id], onDelete: Cascade)
   subProjectId Int
   amount  Float?
   number  String?
@@ -172,7 +172,7 @@ model invoice {
 
 model post {
   id  Int @id @default(autoincrement())
-  subProject subProject @relation(fields: [subProjectId], references: [id])
+  subProject subProject @relation(fields: [subProjectId], references: [id], onDelete: Cascade)
   subProjectId Int
   detail  String?
   available Boolean
@@ -182,9 +182,9 @@ model post {
 
 model subProjectTicket {
   id  Int @id @default(autoincrement())
-  subProject subProject @relation(fields: [subProjectId], references: [id])
+  subProject subProject @relation(fields: [subProjectId], references: [id], onDelete: Cascade)
   subProjectId Int
-  user userinfo @relation(fields: [userId], references: [id])
+  user userinfo @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
   senderRead  Boolean @default(true)
   adminRead Boolean @default(false)
@@ -197,9 +197,9 @@ model subProjectTicket {
 
 model subProjectChat {
   id  Int @id @default(autoincrement())
-  ticket subProjectTicket @relation(fields: [ticketId], references: [id])
+  ticket subProjectTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   ticketId Int
-  sender userinfo @relation(fields: [senderId], references: [id])
+  sender userinfo @relation(fields: [senderId], references: [id], onDelete: Cascade)
   senderId Int
   message String
   createdAt DateTime @default(now())
@@ -208,9 +208,9 @@ model subProjectChat {
 
 model otherChat {
   id  Int @id @default(autoincrement())
-  ticket otherTicket @relation(fields: [ticketId], references: [id])
+  ticket otherTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   ticketId Int
-  sender userinfo @relation(fields: [senderId], references: [id])
+  sender userinfo @relation(fields: [senderId], references: [id], onDelete: Cascade)
   senderId Int
   message String
   createdAt DateTime @default(now())
@@ -219,9 +219,9 @@ model otherChat {
 
 model otherTicket {
   id  Int @id @default(autoincrement())
-  user userinfo @relation("userRelation", fields: [userId], references: [id])
+  user userinfo @relation("userRelation", fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
-  reciever userinfo? @relation("recieverRelation", fields: [recieverId], references: [id])
+  reciever userinfo? @relation("recieverRelation", fields: [recieverId], references: [id], onDelete: Cascade)
   recieverId Int?
   type String
   senderRead  Boolean @default(true)
