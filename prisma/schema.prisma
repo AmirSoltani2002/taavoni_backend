@@ -149,7 +149,7 @@ model transaction {
   amount  Float
   bank  String
   targetBank  String
-  number  String
+  number  String @unique
   document  String?
   detail  String?
   createdAt DateTime @default(now())
