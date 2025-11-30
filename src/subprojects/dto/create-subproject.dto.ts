@@ -23,4 +23,7 @@ export class CreateSubprojectDto {
     blockId: number
     @IsString()
     direction: string
+    @IsNumber()
+    @IsOptional()
+    pricePerMeter?: number;
 }

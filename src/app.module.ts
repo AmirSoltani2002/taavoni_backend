@@ -24,6 +24,8 @@ import { BlocksModule } from './blocks/blocks.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { InvoiceModule } from './invoice/invoice.module';
 import { TransactionHistoryModule } from './transaction-history/transaction-history.module';
+import { PreSellingModule } from './pre-selling/pre-selling.module';
+import { FinalTransactionModule } from './final-transaction/final-transaction.module';
 import * as redisStore from 'cache-manager-ioredis';
 
 @Module({
@@ -39,7 +41,7 @@ import * as redisStore from 'cache-manager-ioredis';
             ServeStaticModule.forRoot({
               rootPath: join(__dirname, '..', '..', 'uploads'),
               serveRoot: '/uploads',
-            }), BlocksModule, TransactionModule, InvoiceModule, TransactionHistoryModule],
+            }), BlocksModule, TransactionModule, InvoiceModule, TransactionHistoryModule, PreSellingModule, FinalTransactionModule],
   controllers: [AppController],
   providers: [AppService,
     {

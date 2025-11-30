@@ -20,4 +20,7 @@ export class CreateProjectDto {
     @IsNumber()
     @IsOptional()
     latitude?: number;
+    @IsNumber()
+    @IsOptional()
+    pricePerMeter?: number;
 }

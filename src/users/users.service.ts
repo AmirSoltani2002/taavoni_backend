@@ -44,6 +44,14 @@ export class UsersService {
     });
   }
 
+  async getPreSellingUser(userId: number) {
+    const user = await this.db.userinfo.findUniqueOrThrow({
+      where: { id: userId },
+      include: { preSellings: true },
+    });
+    return user.preSellings;
+  }
+
   async update(id: number, updateUser: Prisma.userinfoUpdateInput) {
     const user = await this.findOne(id);
     if (!user) throw new NotFoundException();

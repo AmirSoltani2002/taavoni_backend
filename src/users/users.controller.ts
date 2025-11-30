@@ -52,6 +52,12 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @Get('pre-selling')
+  getPreSellingUser(@Request() req) {
+    const userId = req['user'].id;
+    return this.usersService.getPreSellingUser(userId);
+  }
+
   @UseInterceptors() //to override cache
   @Get('profile')
   async profile(@Request() req): Promise<any> {

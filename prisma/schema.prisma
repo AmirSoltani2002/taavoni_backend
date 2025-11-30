@@ -28,6 +28,7 @@ model userinfo {
   type  TYPE?
   password String
   userDocs userDoc[]
+  finalTransaction finalTransaction[]
   transactionHistory  transactionHistory[]
   subProjects subProject[]
   subProjectTickets subProjectTicket[]
@@ -38,6 +39,7 @@ model userinfo {
   otherTicketsUser otherTicket[] @relation("userRelation")
   isargaryPercent  ISARGARIPERCENT?
   transactions transaction[]
+  preSellings preSelling[]
   azadeEsaratMonths Int?
   azadeMonths Int?
   shahedFamilyNumber Int?
@@ -86,8 +88,10 @@ model project {
   endDate DateTime?
   longitude Float?
   latitude Float?
+  pricePerMeter  Float @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  preSellings preSelling[]
   blocks block[]
   transaction transaction[]
   projectDocs projectDoc[]
@@ -114,6 +118,7 @@ model subProject {
   point  Int  @default(0)
   roomCount Int
   options String?
+  pricePerMeter  Float @default(0)
   direction String
   unitNumber  Int @default(0)
   user userinfo? @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -123,8 +128,21 @@ model subProject {
   posts post[]
   transactionHistory transactionHistory[]
   invoice invoice[]
+  finalTransaction finalTransaction[]
   subProjectTickets subProjectTicket[]
   subProjectDocs  subProjectDoc[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model preSelling {
+  id Int @id @default(autoincrement())
+  user  userinfo @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int
+  project  project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId  Int
+  area  Int
+  totalPrice Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -144,8 +162,23 @@ model transaction {
   user  userinfo @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
   project  project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  isConfirmed Boolean @default(false)
   projectId Int
+  amount  Float
+  bank  String
+  targetBank  String
+  number  String @unique
+  document  String?
+  detail  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model finalTransaction {
+  id  Int @id @default(autoincrement())
+  user  userinfo @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int
+  subProject  subProject @relation(fields: [subProjectId], references: [id], onDelete: Cascade)
+  subProjectId Int
   amount  Float
   bank  String
   targetBank  String
