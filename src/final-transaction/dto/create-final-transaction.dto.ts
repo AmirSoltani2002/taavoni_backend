@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsDate, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateFinalTransactionDto {
     @IsNumber()
@@ -21,6 +21,10 @@ export class CreateFinalTransactionDto {
     @IsString()
     @IsOptional()
     document?: string;
+
+    @IsDate()
+    @IsOptional()
+    date?: Date;
 
     @IsNumber()
     amount: number;

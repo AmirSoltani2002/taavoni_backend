@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsDate, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateTransactionDto {
     @IsNumber()
@@ -10,7 +10,7 @@ export class CreateTransactionDto {
 
     @IsNumber()
     @IsOptional()
-    projectId?: number;
+    presellingId?: number;
 
     @IsString()
     bank: string;
@@ -31,4 +31,8 @@ export class CreateTransactionDto {
     @IsString()
     @IsOptional()
     detail?: string;
+
+    @IsDate()
+    @IsOptional()
+    date?: Date;
 }

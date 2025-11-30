@@ -93,7 +93,6 @@ model project {
   updatedAt DateTime @updatedAt
   preSellings preSelling[]
   blocks block[]
-  transaction transaction[]
   projectDocs projectDoc[]
 }
 
@@ -143,6 +142,7 @@ model preSelling {
   projectId  Int
   area  Int
   totalPrice Float
+  transaction transaction[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -161,14 +161,15 @@ model transaction {
   id  Int @id @default(autoincrement())
   user  userinfo @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
-  project  project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId Int
+  preselling  preSelling @relation(fields: [presellingId], references: [id], onDelete: Cascade)
+  presellingId Int
   amount  Float
   bank  String
   targetBank  String
   number  String @unique
   document  String?
   detail  String?
+  date  DateTime @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -185,6 +186,7 @@ model finalTransaction {
   number  String @unique
   document  String?
   detail  String?
+  date  DateTime @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

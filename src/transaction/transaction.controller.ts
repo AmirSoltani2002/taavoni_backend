@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Res, UnauthorizedException, UseInterceptors, BadRequestException, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Res, UnauthorizedException, UseInterceptors, BadRequestException, UploadedFile, Query } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -43,10 +43,22 @@ export class TransactionController {
     if(!['admin', 'system'].includes(req['user'].type)){
       createTransactionDto.userId = req['user'].id;
     }
+
     if(createTransactionDto?.isConfirmed !== undefined && !['admin', 'system'].includes(req['user'].type)){
       throw new UnauthorizedException("Only admin or system can change confirmation status");
     }
     return this.transactionService.create(createTransactionDto);
+  }
+
+  @Roles(['admin', 'system'])
+  @Get('score')
+  getScore(@Query('userId') userId?: number) {
+    return this.transactionService.getScoreAll(userId);
+  }
+
+  @Get('profile/score')
+  getScoreProfile(@Request() req) {
+    return this.transactionService.getScoreAll(+req['user'].id);
   }
 
   @Get('download/:fileId')
