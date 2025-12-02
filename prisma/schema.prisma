@@ -169,6 +169,7 @@ model transaction {
   number  String @unique
   document  String?
   detail  String?
+  isConfirmed Boolean @default(false)
   date  DateTime @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -184,6 +185,7 @@ model finalTransaction {
   bank  String
   targetBank  String
   number  String @unique
+  isConfirmed Boolean @default(false)
   document  String?
   detail  String?
   date  DateTime @default(now())

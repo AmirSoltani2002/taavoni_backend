@@ -15,28 +15,49 @@ export class PreSellingService {
         project: { connect: { id: projectId } },
         user: { connect: { id: userId } },
       },
+      include: {
+        project: true,
+        user: true
+      },
     });
   }
 
   findAll() {
-    return this.db.preSelling.findMany();
+    return this.db.preSelling.findMany({
+      include: {
+        project: true,
+        user: true
+      },
+    });
   }
 
   findAllByUser(userId: number) {
     return this.db.preSelling.findMany({
       where: { userId },
+      include: {
+        project: true,
+        user: true
+      },
     });
   }
 
   findAllBySubProject(projectId: number) {
     return this.db.preSelling.findMany({
       where: { projectId },
+      include: {
+        project: true,
+        user: true
+      },
     });
   }
 
   findOne(id: number) {
     return this.db.preSelling.findUniqueOrThrow({
       where: { id },
+      include: {
+        project: true,
+        user: true
+      },
     });
   }
 

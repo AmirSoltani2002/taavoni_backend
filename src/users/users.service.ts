@@ -47,7 +47,11 @@ export class UsersService {
   async getPreSellingUser(userId: number) {
     const user = await this.db.userinfo.findUniqueOrThrow({
       where: { id: userId },
-      include: { preSellings: true },
+      include: { preSellings: {
+        include: {
+          project: true
+        }
+      } },
     });
     return user.preSellings;
   }
