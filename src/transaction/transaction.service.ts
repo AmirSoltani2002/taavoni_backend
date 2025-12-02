@@ -61,7 +61,7 @@ export class TransactionService {
   scoreComputation(transaction: any) {
     const basePrice = 10**7;
     const today = new Date();
-    const dayDiffs = Math.floor((today.getTime() - transaction.date.getTime()) / (1000 * 60 * 60 * 24));
+    const dayDiffs = Math.floor((today.getTime() - transaction.date.getTime()) / (1000 * 60 * 60 * 24)) * (transaction.isConfirmed  ? 1 : 0);
     return Number((dayDiffs * (Number(transaction?.amount) as number) / basePrice).toFixed(1));
   }
 
