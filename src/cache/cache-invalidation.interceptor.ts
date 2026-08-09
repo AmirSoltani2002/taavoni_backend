@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { Observable, tap } from 'rxjs';
+import { mergeMap, Observable } from 'rxjs';
 
 @Injectable()
 export class CacheInvalidationInterceptor implements NestInterceptor {
@@ -22,10 +22,9 @@ export class CacheInvalidationInterceptor implements NestInterceptor {
     }
 
     return next.handle().pipe(
-      tap({
-        next: () => {
-          void this.cacheManager.clear();
-        },
+      mergeMap(async (response) => {
+        await this.cacheManager.clear();
+        return response;
       }),
     );
   }
