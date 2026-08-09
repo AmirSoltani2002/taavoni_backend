@@ -43,7 +43,7 @@ import { UsersModule } from './users/users.module';
               'redis://localhost:6379/0',
           ),
         ],
-        ttl: config.get<number>('CACHE_TTL_MS') ?? 30_000,
+        ttl: Number(config.get('CACHE_TTL_MS') ?? 30_000),
       }),
     }),
     UsersModule,
