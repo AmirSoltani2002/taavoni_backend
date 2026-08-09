@@ -18,7 +18,7 @@ export class SessionService implements OnModuleDestroy {
       },
     );
     this.ttlSeconds =
-      config.get<number>('SESSION_TTL_SECONDS') ?? 12 * 60 * 60;
+      Number(config.get('SESSION_TTL_SECONDS') ?? 12 * 60 * 60);
   }
 
   async create(
