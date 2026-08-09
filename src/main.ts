@@ -6,19 +6,30 @@ import { PrismaExceptionFilter } from 'filters/prisma-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
+
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // remove extra properties
-      forbidNonWhitelisted: true, // throw error for unknown fields
-      transform: true, // transform payloads to DTO instances
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
       transformOptions: { enableImplicitConversion: true },
     }),
   );
+
+  const allowedOrigins = (
+    process.env.CORS_ORIGINS ?? 'http://localhost:5173'
+  )
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
   app.enableCors({
-    origin: '*', // adjust as needed
-    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-    credentials: true, // allow cookies or auth headers
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    credentials: true,
   });
+
   const config = new DocumentBuilder()
     .setTitle('UserInfo APIs')
     .setDescription('Backend service API documentation')
