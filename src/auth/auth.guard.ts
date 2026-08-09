@@ -1,48 +1,55 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { jwtConstants } from "./config";
-import { Request } from "express";
-import { Reflector } from "@nestjs/core";
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
+import { Reflector } from '@nestjs/core';
 import { Public, Roles } from 'src/auth/roles.decorator';
+import { SessionService } from './session.service';
+import { getTokenFromCookie } from './token-cookie';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private reflector: Reflector) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly reflector: Reflector,
+    private readonly sessionService: SessionService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const publicDec = this.reflector.getAllAndOverride(Public, [
-        context.getHandler(),
-        context.getClass(),
-    ])
-    if(publicDec)
-        return true
-    const token = this.extractTokenFromHeader(request);
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (publicDec) {
+      return true;
+    }
 
+    const token = getTokenFromCookie(request);
     if (!token) {
-      throw new UnauthorizedException('Missing token');
+      throw new UnauthorizedException('Missing authentication cookie');
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
-      });
-      request['user'] = payload; // ✅ attach payload to request
+      const payload = await this.jwtService.verifyAsync(token);
+      if (!(await this.sessionService.isActive(token))) {
+        throw new UnauthorizedException('Session is no longer active');
+      }
+      request['user'] = payload;
       return true;
     } catch {
-      throw new UnauthorizedException('Invalid or expired token');
+      throw new UnauthorizedException('Invalid or expired session');
     }
-  }
-
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
   }
 }
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride(Roles, [
@@ -51,11 +58,11 @@ export class RolesGuard implements CanActivate {
     ]);
 
     if (!requiredRoles) {
-      return true; // no role restriction
+      return true;
     }
 
     const { user } = context.switchToHttp().getRequest();
-    return requiredRoles.includes(user?.type); // check if user's role matches
+    return requiredRoles.includes(user?.type);
   }
 }
 
@@ -67,12 +74,8 @@ export class GlobalGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // Run AuthGuard first
     const authResult = await this.authGuard.canActivate(context);
     if (!authResult) return false;
-
-    // Then run RolesGuard
     return this.rolesGuard.canActivate(context);
   }
 }
-
