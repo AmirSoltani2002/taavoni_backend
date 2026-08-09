@@ -5,7 +5,7 @@ import { AuthEmailDto, AuthNationalDto } from './dto/auth.dto';
 import { Public } from './roles.decorator';
 import {
   AUTH_COOKIE_NAME,
-  AUTH_COOKIE_OPTIONS,
+  getAuthCookieOptions,
   getTokenFromCookie,
 } from './token-cookie';
 
@@ -23,7 +23,7 @@ export class AuthController {
       signInDto.email,
       signInDto.password,
     );
-    response.cookie(AUTH_COOKIE_NAME, result.token, AUTH_COOKIE_OPTIONS);
+    response.cookie(AUTH_COOKIE_NAME, result.token, getAuthCookieOptions());
     return { authenticated: true, user: result.user };
   }
 
@@ -36,7 +36,7 @@ export class AuthController {
       signInDto.nationalNumber,
       signInDto.password,
     );
-    response.cookie(AUTH_COOKIE_NAME, result.token, AUTH_COOKIE_OPTIONS);
+    response.cookie(AUTH_COOKIE_NAME, result.token, getAuthCookieOptions());
     return { authenticated: true, user: result.user };
   }
 
@@ -49,11 +49,12 @@ export class AuthController {
     if (token) {
       await this.authService.signOut(token);
     }
+    const cookieOptions = getAuthCookieOptions();
     response.clearCookie(AUTH_COOKIE_NAME, {
-      httpOnly: true,
-      secure: AUTH_COOKIE_OPTIONS.secure,
-      sameSite: AUTH_COOKIE_OPTIONS.sameSite,
-      path: '/',
+      httpOnly: cookieOptions.httpOnly,
+      secure: cookieOptions.secure,
+      sameSite: cookieOptions.sameSite,
+      path: cookieOptions.path,
     });
     return { authenticated: false };
   }
