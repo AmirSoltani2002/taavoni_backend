@@ -17,20 +17,6 @@ pipeline {
     }
 
     stages {
-        stage('Debug GitHub SSH') {
-            steps {
-                sshagent(credentials: ['github-taavoni-backend']) {
-                    sh '''
-                        set -eu
-                        ssh-add -l
-                        ssh -vvT -o BatchMode=yes git@github.com || test "$?" -eq 1
-                        git ls-remote --symref -- \
-                          git@github.com:AmirSoltani2002/taavoni_backend.git HEAD
-                    '''
-                }
-            }
-        }
-
         stage('Checkout') {
             steps {
                 deleteDir()
@@ -60,10 +46,12 @@ pipeline {
         stage('Prepare image tag') {
             steps {
                 script {
-                    env.IMAGE_TAG = "${env.BUILD_NUMBER}-${sh(
+                    def shortCommit = sh(
                         script: 'git rev-parse --short=7 HEAD',
                         returnStdout: true
-                    ).trim()}"
+                    ).trim()
+
+                    env.IMAGE_TAG = "${env.BUILD_NUMBER}-${shortCommit}"
                 }
             }
         }
