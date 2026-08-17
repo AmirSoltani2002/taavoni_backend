@@ -150,3 +150,5 @@ In the final report, summarize changes in simple words, provide exact test and
 lint commands and results, and mention anything not tested and why. If changes
 are ready but unpublished, ask whether the user wants them committed and opened
 as a pull request.
+
+After completion, cleanup all stale containers, images, volumes and packages, made during the testing process.
