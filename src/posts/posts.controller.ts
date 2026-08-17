@@ -24,7 +24,7 @@ export class PostsController {
     return this.postsService.findAllBySubProject(+id);
   }
 
-  @Get('subproject/:id')
+  @Get('project/:id')
   findOneBysubProject(@Param('id') id: string) {
     return this.postsService.findAllByProject(+id);
   }

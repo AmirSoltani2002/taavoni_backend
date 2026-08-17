@@ -10,6 +10,7 @@ RUN npx prisma generate
 
 COPY nest-cli.json tsconfig.json tsconfig.build.json ./
 COPY src ./src
+COPY filters ./filters
 RUN npm run build && npm prune --omit=dev
 
 FROM node:22-alpine AS runtime
@@ -29,5 +30,8 @@ RUN mkdir -p uploads && chown node:node uploads
 USER node
 EXPOSE 3000
 
+HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://127.0.0.1:3000/api-docs/ || exit 1
+
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/src/main.js"]
