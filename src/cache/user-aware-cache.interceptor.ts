@@ -1,14 +1,7 @@
-import {
-  ExecutionContext,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
-import {
-  CACHE_MANAGER,
-  CacheInterceptor,
-} from '@nestjs/cache-manager';
+import { ExecutionContext, Inject, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, CacheInterceptor } from '@nestjs/cache-manager';
 import { Reflector } from '@nestjs/core';
-import { Cache } from 'cache-manager';
+import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class UserAwareCacheInterceptor extends CacheInterceptor {
