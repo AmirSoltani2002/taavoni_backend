@@ -17,6 +17,20 @@ pipeline {
     }
 
     stages {
+        stage('Debug GitHub SSH') {
+            steps {
+                sshagent(credentials: ['github-taavoni-backend']) {
+                    sh '''
+                        set -eu
+                        ssh-add -l
+                        ssh -vvT -o BatchMode=yes git@github.com || test "$?" -eq 1
+                        git ls-remote --symref -- \
+                          git@github.com:AmirSoltani2002/taavoni_backend.git HEAD
+                    '''
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 deleteDir()
