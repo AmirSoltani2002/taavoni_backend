@@ -62,7 +62,16 @@ export class SubProjectDocsController {
     return this.subProjectDocsService.create(createSubProjectDocDto);
   }
 
-  @Roles(['admin', 'system', 'free', 'tehranUni', 'otherUni', 'employee'])
+  @Roles([
+    'admin',
+    'system',
+    'free',
+    'tehranUni',
+    'universityFaculty',
+    'otherUni',
+    'otherUniversityFaculty',
+    'employee',
+  ])
   @Get('download/:fileId')
   async downloadFile(@Param('fileId') fileId: number, @Res() res: Response) {
     const subProjectDoc = await this.subProjectDocsService.findOne(fileId);

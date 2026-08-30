@@ -283,7 +283,9 @@ enum TYPE {
   system
   admin
   tehranUni
+  universityFaculty
   otherUni
+  otherUniversityFaculty
   free
   employee
 }
