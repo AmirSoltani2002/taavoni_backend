@@ -77,7 +77,16 @@ export class ProjectDocsController {
    * Get all Project Documents
    */
 
-  @Roles(['admin', 'system', 'free', 'tehranUni', 'otherUni', 'employee'])
+  @Roles([
+    'admin',
+    'system',
+    'free',
+    'tehranUni',
+    'universityFaculty',
+    'otherUni',
+    'otherUniversityFaculty',
+    'employee',
+  ])
   @Get('download/:fileId')
   async downloadFile(@Param('fileId') fileId: number, @Res() res: Response) {
     console.log('Downloading file with id:', fileId);
@@ -107,7 +116,16 @@ export class ProjectDocsController {
   /**
    * Get all documents for a specific Project
    */
-  @Roles(['admin', 'system', 'free', 'tehranUni', 'otherUni', 'employee'])
+  @Roles([
+    'admin',
+    'system',
+    'free',
+    'tehranUni',
+    'universityFaculty',
+    'otherUni',
+    'otherUniversityFaculty',
+    'employee',
+  ])
   @Get('project/:id')
   async findAllByProject(@Param('id') id: string, @Request() req, @Query('detail') detail?: string) {
     const subprojects = await this.subprojectsService.findAllByUser(req['user'].id);
