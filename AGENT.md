@@ -88,6 +88,8 @@ method and complete controller path. The contract suite must fail for duplicate
 routes. Add behavioral API tests for changed endpoints; a metadata-only case is
 not sufficient for new behavior.
 
+After adding, removing or changing a new feature, never change or remove the existing tests imidiatly afterwards. First, run all the exiting and new tests. If newer test fail, modify code accordingly and search the exact reason. If you found out there is a conflict between newer feature and an existing one, modify both features until the conflict is solved. Then, only if you found out the problem is certainly with the older tests and there are some conflicts between older tests and new features, change tests or remove. After changing and removing them, explain what you did.
+
 For a new feature, test applicable behavior in this order:
 
 1. Normal successful behavior and expected database changes.
