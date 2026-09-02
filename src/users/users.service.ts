@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
+import { IsargaryInfo, normalizeIsargaryInfo } from './isargary-info';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +18,10 @@ export class UsersService {
       throw new ConflictException();
     }
     return this.db.userinfo.create({
-      data: createUser,
+      data: {
+        ...createUser,
+        ...normalizeIsargaryInfo(createUser as Partial<IsargaryInfo>),
+      },
     });
   }
 
@@ -59,9 +63,13 @@ export class UsersService {
   async update(id: number, updateUser: Prisma.userinfoUpdateInput) {
     const user = await this.findOne(id);
     if (!user) throw new NotFoundException();
+    const isargaryInfo = normalizeIsargaryInfo(
+      updateUser as Partial<IsargaryInfo>,
+      user as IsargaryInfo,
+    );
     return this.db.userinfo.update({
       where: { id },
-      data: updateUser,
+      data: { ...updateUser, ...isargaryInfo },
     });
   }
 

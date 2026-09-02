@@ -1,10 +1,18 @@
-import { TYPE, ISARGARIPERCENT, SEX, SHAHEDRELATION } from '@prisma/client';
+import {
+  FRONTPRESENCETYPE,
+  ISARGARRELATION,
+  ISARGARYTYPE,
+  MARTYRRELATION,
+  SEX,
+  TYPE,
+} from '@prisma/client';
 import {
   IsString,
   IsEnum,
   IsDate,
   IsPhoneNumber,
-  IsNumber,
+  IsInt,
+  IsIn,
   Min,
   IsEmail,
   IsOptional,
@@ -43,24 +51,30 @@ export class CreateUserDto {
   type?: TYPE;
   @IsString()
   password: string;
-  @IsEnum(ISARGARIPERCENT)
+  @IsEnum(ISARGARYTYPE)
   @IsOptional()
-  isargaryPercent?: ISARGARIPERCENT;
-  @IsNumber()
+  isargaryType?: ISARGARYTYPE;
+  @IsEnum(MARTYRRELATION)
   @IsOptional()
-  @Min(0)
-  azadeEsaratMonths?: number;
-  @IsNumber()
+  martyrRelation?: MARTYRRELATION | null;
+  @IsEnum(ISARGARRELATION)
   @IsOptional()
-  @Min(0)
-  azadeMonths?: number;
-  @IsNumber()
+  isargarRelation?: ISARGARRELATION | null;
+  @IsInt()
+  @IsIn(Array.from({ length: 16 }, (_, index) => (index + 1) * 5))
   @IsOptional()
-  @Min(0)
-  shahedFamilyNumber?: number;
-  @IsEnum(SHAHEDRELATION)
+  janbaziPercent?: number | null;
+  @IsInt()
+  @Min(1)
   @IsOptional()
-  shahedRelation?: SHAHEDRELATION;
+  captivityMonths?: number | null;
+  @IsEnum(FRONTPRESENCETYPE)
+  @IsOptional()
+  frontPresenceType?: FRONTPRESENCETYPE | null;
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  frontPresenceMonths?: number | null;
   @IsBoolean()
   @IsOptional()
   accepted?: boolean;
