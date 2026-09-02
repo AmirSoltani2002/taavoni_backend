@@ -37,13 +37,15 @@ model userinfo {
   otherChats otherChat[]
   otherTicketsReciever otherTicket[] @relation("recieverRelation")
   otherTicketsUser otherTicket[] @relation("userRelation")
-  isargaryPercent  ISARGARIPERCENT?
+  isargaryType ISARGARYTYPE @default(none)
+  martyrRelation MARTYRRELATION?
+  isargarRelation ISARGARRELATION?
+  janbaziPercent Int?
+  captivityMonths Int?
+  frontPresenceType FRONTPRESENCETYPE?
+  frontPresenceMonths Int?
   transactions transaction[]
   preSellings preSelling[]
-  azadeEsaratMonths Int?
-  azadeMonths Int?
-  shahedFamilyNumber Int?
-  shahedRelation SHAHEDRELATION?
   accepted  Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -290,15 +292,28 @@ enum TYPE {
   employee
 }
 
-enum SHAHEDRELATION {
-  azade_wife
-  azade_child
-  jan_wife
-  jan_child
+enum ISARGARYTYPE {
+  none
+  martyrFamily
+  janbaz
+  azade
+  isargar
 }
 
-enum ISARGARIPERCENT {
-  val10_15
-  val15_20
-  val20_plus
+enum MARTYRRELATION {
+  child
+  brother
+  parent
+  spouse
+}
+
+enum ISARGARRELATION {
+  self
+  spouse
+  child
+}
+
+enum FRONTPRESENCETYPE {
+  voluntary
+  mandatory
 }
