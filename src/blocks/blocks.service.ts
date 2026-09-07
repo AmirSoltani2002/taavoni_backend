@@ -31,25 +31,34 @@ export class BlocksService {
   }
 
   update(id: number, updateBlockDto: UpdateBlockDto) {
-    const {projectId, ...data} = updateBlockDto;
-    if(projectId) {
-      return this.db.block.update({
+    const { projectId, ...data } = updateBlockDto;
+
+    return this.db.$transaction(async (transaction) => {
+      const block = await transaction.block.update({
         where: { id },
         data: {
           ...data,
-          project: {
-            connect: {
-              id: projectId
-            }
-          }
-        }
+          project: projectId
+            ? {
+                connect: {
+                  id: projectId,
+                },
+              }
+            : undefined,
+        },
       });
-    } else {
-      return this.db.block.update({
-        where: { id },
-        data
-      });
-    }
+
+      if (updateBlockDto.negativeFloorCount !== undefined) {
+        await transaction.negativeFloor.deleteMany({
+          where: {
+            blockId: id,
+            floorNumber: { gt: updateBlockDto.negativeFloorCount },
+          },
+        });
+      }
+
+      return block;
+    });
   }
 
   remove(id: number) {

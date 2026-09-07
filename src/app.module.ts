@@ -15,6 +15,7 @@ import { BlocksModule } from './blocks/blocks.module';
 import { DatabaseModule } from './database/database.module';
 import { FinalTransactionModule } from './final-transaction/final-transaction.module';
 import { InvoiceModule } from './invoice/invoice.module';
+import { NegativeFloorsModule } from './negative-floors/negative-floors.module';
 import { OtherChatsModule } from './other-chats/other-chats.module';
 import { OtherTicketsModule } from './other-tickets/other-tickets.module';
 import { PostsModule } from './posts/posts.module';
@@ -69,6 +70,7 @@ import { UsersModule } from './users/users.module';
     TransactionHistoryModule,
     PreSellingModule,
     FinalTransactionModule,
+    NegativeFloorsModule,
   ],
   controllers: [AppController],
   providers: [
