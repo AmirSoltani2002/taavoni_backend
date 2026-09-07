@@ -102,6 +102,7 @@ model block {
   id  Int @id @default(autoincrement())
   name  String
   floorCount Int
+  negativeFloorCount Int @default(0)
   shareArea Int
   buildingArea Int
   description String?
@@ -110,6 +111,21 @@ model block {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   subProjects subProject[]
+  negativeFloors negativeFloor[]
+}
+
+model negativeFloor {
+  id Int @id @default(autoincrement())
+  floorNumber Int
+  parkingCount Int @default(0)
+  storageCount Int @default(0)
+  description String?
+  blockId Int
+  block block @relation(fields: [blockId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([blockId, floorNumber])
 }
 
 model subProject {

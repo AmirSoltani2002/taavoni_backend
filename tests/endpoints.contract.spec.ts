@@ -5,6 +5,7 @@ import { AuthController } from '../src/auth/auth.controller';
 import { BlocksController } from '../src/blocks/blocks.controller';
 import { FinalTransactionController } from '../src/final-transaction/final-transaction.controller';
 import { InvoiceController } from '../src/invoice/invoice.controller';
+import { NegativeFloorsController } from '../src/negative-floors/negative-floors.controller';
 import { OtherChatsController } from '../src/other-chats/other-chats.controller';
 import { OtherTicketsController } from '../src/other-tickets/other-tickets.controller';
 import { PostsController } from '../src/posts/posts.controller';
@@ -38,6 +39,7 @@ const controllers: ControllerClass[] = [
   BlocksController,
   FinalTransactionController,
   InvoiceController,
+  NegativeFloorsController,
   OtherChatsController,
   OtherTicketsController,
   PostsController,

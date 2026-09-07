@@ -61,7 +61,8 @@ export class ProjectsService {
         include: {
           blocks: {
             include: {
-              subProjects: true
+              subProjects: true,
+              negativeFloors: true
             }
           }
         }
