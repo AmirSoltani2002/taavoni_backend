@@ -47,11 +47,12 @@ export class TransactionService {
   }
 
   update(id: number, updateTransactionDto: UpdateTransactionDto) {
-    const {userId, presellingId, ...rest} = updateTransactionDto;
+    const {userId, presellingId, removeDocument, ...rest} = updateTransactionDto;
     return this.db.transaction.update({
       where: { id },
       data: {
         ...rest,
+        document: removeDocument ? null : rest.document,
         user: userId ? { connect: { id: userId } } : undefined,
         preselling: presellingId ? { connect: { id: presellingId } } : undefined,
       }

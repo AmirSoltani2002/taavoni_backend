@@ -10,6 +10,18 @@ import { diskStorage } from 'multer';
 import { Roles } from 'src/auth/roles.decorator';
 
 const uploadPath = path.join(process.cwd(), 'uploads', 'final-transaction');
+
+async function removeUploadedDocument(filename?: string) {
+  if (!filename) return;
+  try {
+    await fs.promises.unlink(path.join(uploadPath, path.basename(filename)));
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      console.error('Unable to remove final transaction document', error);
+    }
+  }
+}
+
 @Controller('final-transaction')
 export class FinalTransactionController {
   constructor(private readonly transactionService: FinalTransactionService) {
@@ -109,6 +121,10 @@ export class FinalTransactionController {
   )
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateFinalTransactionDto: UpdateFinalTransactionDto, @Request() req, @UploadedFile() file?: Express.Multer.File) {
+    if (file && updateFinalTransactionDto.removeDocument) {
+      await removeUploadedDocument(file.filename);
+      throw new BadRequestException('A document cannot be replaced and removed at the same time');
+    }
     if (file) {
       updateFinalTransactionDto.document = `${file.filename}`;
     }
@@ -123,7 +139,18 @@ export class FinalTransactionController {
     if(updateFinalTransactionDto.userId && !['admin', 'system'].includes(req['user'].type)){
       updateFinalTransactionDto.userId = req['user'].id;
     }
-    return this.transactionService.update(+id, updateFinalTransactionDto);
+    try {
+      const updatedTransaction = await this.transactionService.update(+id, updateFinalTransactionDto);
+      if ((file || updateFinalTransactionDto.removeDocument) && existingFile.document) {
+        await removeUploadedDocument(existingFile.document);
+      }
+      return updatedTransaction;
+    } catch (error) {
+      if (file) {
+        await removeUploadedDocument(file.filename);
+      }
+      throw error;
+    }
   }
 
   @Delete(':id')

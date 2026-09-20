@@ -10,6 +10,18 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
 const uploadPath = path.join(process.cwd(), 'uploads', 'transaction');
+
+async function removeUploadedDocument(filename?: string) {
+  if (!filename) return;
+  try {
+    await fs.promises.unlink(path.join(uploadPath, path.basename(filename)));
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      console.error('Unable to remove transaction document', error);
+    }
+  }
+}
+
 @Controller('transaction')
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {
@@ -121,6 +133,10 @@ export class TransactionController {
   )
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateTransactionDto: UpdateTransactionDto, @Request() req, @UploadedFile() file?: Express.Multer.File) {
+    if (file && updateTransactionDto.removeDocument) {
+      await removeUploadedDocument(file.filename);
+      throw new BadRequestException('A document cannot be replaced and removed at the same time');
+    }
     if (file) {
       updateTransactionDto.document = `${file.filename}`;
     }
@@ -135,7 +151,18 @@ export class TransactionController {
     if(updateTransactionDto.userId && !['admin', 'system'].includes(req['user'].type)){
       updateTransactionDto.userId = req['user'].id;
     }
-    return this.transactionService.update(+id, updateTransactionDto);
+    try {
+      const updatedTransaction = await this.transactionService.update(+id, updateTransactionDto);
+      if ((file || updateTransactionDto.removeDocument) && existingFile.document) {
+        await removeUploadedDocument(existingFile.document);
+      }
+      return updatedTransaction;
+    } catch (error) {
+      if (file) {
+        await removeUploadedDocument(file.filename);
+      }
+      throw error;
+    }
   }
 
   @Delete(':id')

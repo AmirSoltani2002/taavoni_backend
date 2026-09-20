@@ -65,11 +65,12 @@ export class FinalTransactionService {
   }
 
   update(id: number, updateFinalTransactionDto: UpdateFinalTransactionDto) {
-    const {userId, subProjectId, ...rest} = updateFinalTransactionDto;
+    const {userId, subProjectId, removeDocument, ...rest} = updateFinalTransactionDto;
     return this.db.finalTransaction.update({
       where: { id },
       data: {
         ...rest,
+        document: removeDocument ? null : rest.document,
         user: userId ? { connect: { id: userId } } : undefined,
         subProject: subProjectId ? { connect: { id: subProjectId } } : undefined,
       }
