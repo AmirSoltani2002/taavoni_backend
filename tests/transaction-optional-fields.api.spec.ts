@@ -88,13 +88,12 @@ describe('Optional transaction payment details API', () => {
           userId: 7,
           [relationField]: 15,
           amount: 2500000,
+          bank: undefined,
+          targetBank: undefined,
+          number: undefined,
+          date: undefined,
         }),
       );
-      const payload = service.create.mock.calls[0][0];
-      expect(payload.bank).toBeUndefined();
-      expect(payload.targetBank).toBeUndefined();
-      expect(payload.number).toBeUndefined();
-      expect(payload.date).toBeUndefined();
     },
   );
 
