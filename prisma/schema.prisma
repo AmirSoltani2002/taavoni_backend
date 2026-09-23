@@ -182,13 +182,13 @@ model transaction {
   preselling  preSelling @relation(fields: [presellingId], references: [id], onDelete: Cascade)
   presellingId Int
   amount  Float
-  bank  String
-  targetBank  String
-  number  String @unique
+  bank  String?
+  targetBank  String?
+  number  String? @unique
   document  String?
   detail  String?
   isConfirmed Boolean @default(false)
-  date  DateTime @default(now())
+  date  DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -200,13 +200,13 @@ model finalTransaction {
   subProject  subProject @relation(fields: [subProjectId], references: [id], onDelete: Cascade)
   subProjectId Int
   amount  Float
-  bank  String
-  targetBank  String
-  number  String @unique
+  bank  String?
+  targetBank  String?
+  number  String? @unique
   isConfirmed Boolean @default(false)
   document  String?
   detail  String?
-  date  DateTime @default(now())
+  date  DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
