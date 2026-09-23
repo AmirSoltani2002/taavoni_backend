@@ -2,6 +2,18 @@ import { FinalTransactionService } from '../src/final-transaction/final-transact
 import { TransactionService } from '../src/transaction/transaction.service';
 
 describe('Transaction edit services', () => {
+  it('gives transactions without a payment date no score', () => {
+    const service = new TransactionService({} as never);
+
+    expect(
+      service.scoreComputation({
+        date: null,
+        amount: 10_000_000,
+        isConfirmed: true,
+      }),
+    ).toBe(0);
+  });
+
   it('clears a preselling transaction document without persisting the command field', async () => {
     const update = jest.fn().mockResolvedValue({ id: 4, document: null });
     const service = new TransactionService({

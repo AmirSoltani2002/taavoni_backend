@@ -7,6 +7,10 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { transformBooleanString } from 'src/common/transform-boolean';
+import {
+  transformNullableDate,
+  transformNullableString,
+} from 'src/common/transform-nullable';
 
 export class CreateTransactionDto {
   @IsNumber()
@@ -18,14 +22,17 @@ export class CreateTransactionDto {
   isConfirmed?: boolean;
 
   @IsNumber()
+  presellingId: number;
+
+  @IsString()
   @IsOptional()
-  presellingId?: number;
+  @Transform(transformNullableString)
+  bank?: string | null;
 
   @IsString()
-  bank: string;
-
-  @IsString()
-  number: string;
+  @IsOptional()
+  @Transform(transformNullableString)
+  number?: string | null;
 
   @IsString()
   @IsOptional()
@@ -35,7 +42,9 @@ export class CreateTransactionDto {
   amount: number;
 
   @IsString()
-  targetBank: string;
+  @IsOptional()
+  @Transform(transformNullableString)
+  targetBank?: string | null;
 
   @IsString()
   @IsOptional()
@@ -43,5 +52,6 @@ export class CreateTransactionDto {
 
   @IsDate()
   @IsOptional()
-  date?: Date;
+  @Transform(transformNullableDate)
+  date?: Date | null;
 }

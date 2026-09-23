@@ -8,6 +8,10 @@ import * as path from 'path';
 import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import {
+  preventClearingTransactionPaymentDetails,
+  requireTransactionPaymentDetails,
+} from 'src/common/transaction-payment-details';
 
 const uploadPath = path.join(process.cwd(), 'uploads', 'transaction');
 
@@ -49,14 +53,16 @@ export class TransactionController {
   )
   @Post()
   create(@Body() createTransactionDto: CreateTransactionDto, @Request() req, @UploadedFile() file: Express.Multer.File) {
+    const canLeavePaymentDetailsEmpty = ['admin', 'system'].includes(req['user'].type);
     if (file) {
       createTransactionDto.document = `${file.filename}`;
     }
-    if(!['admin', 'system'].includes(req['user'].type)){
+    if(!canLeavePaymentDetailsEmpty){
       createTransactionDto.userId = req['user'].id;
+      requireTransactionPaymentDetails(createTransactionDto);
     }
 
-    if(createTransactionDto?.isConfirmed !== undefined && !['admin', 'system'].includes(req['user'].type)){
+    if(createTransactionDto?.isConfirmed !== undefined && !canLeavePaymentDetailsEmpty){
       throw new UnauthorizedException("Only admin or system can change confirmation status");
     }
     return this.transactionService.create(createTransactionDto);
@@ -150,6 +156,9 @@ export class TransactionController {
     }
     if(updateTransactionDto.userId && !['admin', 'system'].includes(req['user'].type)){
       updateTransactionDto.userId = req['user'].id;
+    }
+    if(!['admin', 'system'].includes(req['user'].type)){
+      preventClearingTransactionPaymentDetails(updateTransactionDto);
     }
     try {
       const updatedTransaction = await this.transactionService.update(+id, updateTransactionDto);
