@@ -7,13 +7,14 @@ import { DatabaseService } from 'src/database/database.service';
 export class UserDocService {
   constructor(private readonly db: DatabaseService){}
 
-  create(createUserDocDto: CreateUserDocDto) {
+  create(createUserDocDto: CreateUserDocDto, validation: boolean) {
     const {userId, document, detail} = createUserDocDto;
     return this.db.userDoc.create({
       data: {
         document: document as string,
         user: {connect: {id: userId} },
-        detail
+        detail,
+        validation
       }
     })
   }
@@ -59,6 +60,19 @@ export class UserDocService {
         ...rest,
       },
     })
+  }
+
+  async verify(id: number) {
+    const document = await this.db.userDoc.findUniqueOrThrow({
+      where: {id},
+    });
+    if (document.validation) {
+      return document;
+    }
+    return this.db.userDoc.update({
+      where: {id},
+      data: {validation: true},
+    });
   }
 
   remove(id: number) {

@@ -57,6 +57,7 @@ model userDoc {
   userId  Int
   document String
   detail String?
+  validation Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

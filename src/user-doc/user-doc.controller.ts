@@ -135,7 +135,10 @@ export class UserDocController {
         throw new NotFoundException('User is not found');
       }
       this.assertDocumentAccess(req.user, owner, createUserDocDto.detail);
-      return await this.userDocService.create(createUserDocDto);
+      return await this.userDocService.create(
+        createUserDocDto,
+        ADMIN_TYPES.has(req.user.type ?? ''),
+      );
     } catch (error) {
       this.discardUploadedFile(file);
       throw error;
@@ -152,6 +155,12 @@ export class UserDocController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userDocService.findOne(+id);
+  }
+
+  @Roles(['admin', 'system'])
+  @Patch(':id/verify')
+  verify(@Param('id') id: string) {
+    return this.userDocService.verify(+id);
   }
 
   @UseInterceptors(

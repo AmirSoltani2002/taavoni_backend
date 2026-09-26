@@ -1,5 +1,6 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { APP_GUARD } from '@nestjs/core';
 import type { NextFunction, Request, Response } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -7,6 +8,7 @@ import request from 'supertest';
 import { UserDocController } from '../src/user-doc/user-doc.controller';
 import { UserDocService } from '../src/user-doc/user-doc.service';
 import { UsersService } from '../src/users/users.service';
+import { RolesGuard } from '../src/auth/auth.guard';
 
 type Actor = {
   id: number;
@@ -26,6 +28,7 @@ describe('User document API', () => {
     create: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
+    verify: jest.fn(),
     remove: jest.fn(),
   };
   const usersService = {
@@ -37,6 +40,7 @@ describe('User document API', () => {
     userId: owner.id,
     document: downloadTestFile,
     detail,
+    validation: false,
     user: owner,
   });
 
@@ -46,6 +50,7 @@ describe('User document API', () => {
       providers: [
         { provide: UserDocService, useValue: userDocService },
         { provide: UsersService, useValue: usersService },
+        { provide: APP_GUARD, useClass: RolesGuard },
       ],
     }).compile();
 
@@ -108,6 +113,7 @@ describe('User document API', () => {
 
       expect(userDocService.create).toHaveBeenCalledWith(
         expect.objectContaining({ userId: 7, detail: 'کارت ملی' }),
+        true,
       );
     },
   );
@@ -128,7 +134,10 @@ describe('User document API', () => {
       })
       .expect(201);
 
-    expect(userDocService.create).toHaveBeenCalledTimes(1);
+    expect(userDocService.create).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: 7 }),
+      false,
+    );
   });
 
   it.each([
@@ -245,6 +254,26 @@ describe('User document API', () => {
       .expect(400);
 
     expect(userDocService.update).not.toHaveBeenCalled();
+  });
+
+  it.each(['admin', 'system'])(
+    'lets a %s verify an investor document',
+    async (type) => {
+      actor = { id: 1, type };
+      userDocService.verify.mockResolvedValue({ id: 12, validation: true });
+
+      await request(httpServer).patch('/user-doc/12/verify').expect(200);
+
+      expect(userDocService.verify).toHaveBeenCalledWith(12);
+    },
+  );
+
+  it('prevents an investor from verifying a document', async () => {
+    actor = { id: 7, type: 'free' };
+
+    await request(httpServer).patch('/user-doc/12/verify').expect(403);
+
+    expect(userDocService.verify).not.toHaveBeenCalled();
   });
 
   it('lets an administrator download an investor document', async () => {
