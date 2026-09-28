@@ -237,9 +237,72 @@ describe('User document API', () => {
       .send({ detail: 'عنوان جدید' })
       .expect(200);
 
-    expect(userDocService.update).toHaveBeenCalledWith(12, {
-      detail: 'عنوان جدید',
-    });
+    expect(userDocService.update).toHaveBeenCalledWith(
+      12,
+      { detail: 'عنوان جدید' },
+      true,
+    );
+  });
+
+  it.each(['admin', 'system'])(
+    'lets a %s update an investor document without invalidating it',
+    async (type) => {
+      actor = { id: 1, type };
+      userDocService.findOne.mockResolvedValue(
+        documentFor({ id: 7, type: 'free' }),
+      );
+      userDocService.update.mockResolvedValue({
+        id: 12,
+        detail: 'عنوان مدیر',
+        validation: true,
+      });
+
+      await request(httpServer)
+        .patch('/user-doc/12')
+        .send({ detail: 'عنوان مدیر' })
+        .expect(200);
+
+      expect(userDocService.update).toHaveBeenCalledWith(
+        12,
+        { detail: 'عنوان مدیر' },
+        false,
+      );
+    },
+  );
+
+  it('replaces an owner document and removes the previous file', async () => {
+    actor = { id: 7, type: 'free' };
+    fs.writeFileSync(path.join(uploadDirectory, downloadTestFile), 'old file');
+    userDocService.findOne.mockResolvedValue(
+      documentFor({ id: 7, type: 'free' }),
+    );
+    userDocService.update.mockImplementation((id: number, data: object) =>
+      Promise.resolve({ id, ...data, validation: false }),
+    );
+
+    await request(httpServer)
+      .patch('/user-doc/12')
+      .field('detail', 'عنوان جدید')
+      .attach('file', Buffer.from('replacement'), {
+        filename: `replacement${uploadTestSuffix}`,
+        contentType: 'text/plain',
+      })
+      .expect(200);
+
+    expect(fs.existsSync(path.join(uploadDirectory, downloadTestFile))).toBe(
+      false,
+    );
+    const updateCall = userDocService.update.mock.calls[0] as unknown as [
+      number,
+      { detail: string; document: string },
+      boolean,
+    ];
+    expect(updateCall[0]).toBe(12);
+    expect(updateCall[1].detail).toBe('عنوان جدید');
+    expect(updateCall[1].document).toEqual(
+      expect.stringMatching(uploadTestSuffix),
+    );
+    expect(updateCall[2]).toBe(true);
   });
 
   it('rejects document ownership changes', async () => {
