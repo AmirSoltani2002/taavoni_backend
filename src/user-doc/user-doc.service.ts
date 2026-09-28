@@ -41,15 +41,20 @@ export class UserDocService {
     })
   }
 
-  update(id: number, updateUserDocDto: UpdateUserDocDto) {
-    const {userId, ...rest} = updateUserDocDto;
+  update(
+    id: number,
+    updateUserDocDto: UpdateUserDocDto,
+    invalidateValidation = false,
+  ) {
+    const { userId, ...rest } = updateUserDocDto;
     return this.db.userDoc.update({
-      where: {id},
+      where: { id },
       data: {
         ...rest,
-        user: userId ? {connect: {id: userId}} : undefined
+        ...(invalidateValidation ? { validation: false } : {}),
+        user: userId ? { connect: { id: userId } } : undefined,
       },
-    })
+    });
   }
 
   updateByUser(id: number, updateUserDocDto: UpdateUserDocDto, detail: string) {

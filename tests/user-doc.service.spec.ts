@@ -32,6 +32,35 @@ describe('UserDocService', () => {
     });
   });
 
+  it('invalidates a document edited by its owner', async () => {
+    userDoc.update.mockResolvedValue({ id: 12, validation: false });
+
+    await service.update(12, { detail: 'عنوان جدید' }, true);
+
+    expect(userDoc.update).toHaveBeenCalledWith({
+      where: { id: 12 },
+      data: {
+        detail: 'عنوان جدید',
+        validation: false,
+        user: undefined,
+      },
+    });
+  });
+
+  it('preserves validation when an administrator edits a document', async () => {
+    userDoc.update.mockResolvedValue({ id: 12, validation: true });
+
+    await service.update(12, { detail: 'عنوان مدیر' });
+
+    expect(userDoc.update).toHaveBeenCalledWith({
+      where: { id: 12 },
+      data: {
+        detail: 'عنوان مدیر',
+        user: undefined,
+      },
+    });
+  });
+
   it('verifies an unverified document', async () => {
     userDoc.findUniqueOrThrow.mockResolvedValue({
       id: 12,

@@ -66,9 +66,14 @@ export class UserDocController {
     }
   }
 
-  private discardUploadedFile(file?: Express.Multer.File) {
-    if (file?.path) {
-      fs.unlink(file.path, () => undefined);
+  private async removeFile(filePath?: string) {
+    if (!filePath) return;
+    try {
+      await fs.promises.unlink(filePath);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+        console.error('Unable to remove user document', error);
+      }
     }
   }
 
@@ -140,7 +145,7 @@ export class UserDocController {
         ADMIN_TYPES.has(req.user.type ?? ''),
       );
     } catch (error) {
-      this.discardUploadedFile(file);
+      await this.removeFile(file.path);
       throw error;
     }
   }
@@ -201,9 +206,17 @@ export class UserDocController {
       if (file) {
         updateUserDocDto.document = `${file?.filename}`;
       }
-      return await this.userDocService.update(+id, updateUserDocDto);
+      const updatedDocument = await this.userDocService.update(
+        +id,
+        updateUserDocDto,
+        !ADMIN_TYPES.has(req.user.type ?? ''),
+      );
+      if (file) {
+        await this.removeFile(path.join(uploadPath, existingDocument.document));
+      }
+      return updatedDocument;
     } catch (error) {
-      this.discardUploadedFile(file);
+      await this.removeFile(file?.path);
       throw error;
     }
   }
