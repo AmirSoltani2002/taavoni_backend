@@ -6,6 +6,7 @@ describe('UserDocService', () => {
     create: jest.fn(),
     findUniqueOrThrow: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
   };
   const db = { userDoc };
   const service = new UserDocService(db as unknown as DatabaseService);
@@ -33,18 +34,41 @@ describe('UserDocService', () => {
   });
 
   it('invalidates a document edited by its owner', async () => {
-    userDoc.update.mockResolvedValue({ id: 12, validation: false });
+    userDoc.updateMany.mockResolvedValue({ count: 1 });
+    userDoc.findUniqueOrThrow.mockResolvedValue({
+      id: 12,
+      validation: false,
+      editedByInvestor: true,
+    });
 
     await service.update(12, { detail: 'عنوان جدید' }, true);
 
-    expect(userDoc.update).toHaveBeenCalledWith({
-      where: { id: 12 },
+    expect(userDoc.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: 12,
+        validation: false,
+        editedByInvestor: false,
+      },
       data: {
         detail: 'عنوان جدید',
         validation: false,
-        user: undefined,
+        editedByInvestor: true,
       },
     });
+    expect(userDoc.findUniqueOrThrow).toHaveBeenCalledWith({
+      where: { id: 12 },
+      include: { user: true },
+    });
+  });
+
+  it('rejects an investor edit when its opportunity is unavailable', async () => {
+    userDoc.updateMany.mockResolvedValue({ count: 0 });
+
+    await expect(
+      service.update(12, { detail: 'عنوان جدید' }, true),
+    ).rejects.toThrow('ویرایش این مدرک تنها یک بار');
+
+    expect(userDoc.findUniqueOrThrow).not.toHaveBeenCalled();
   });
 
   it('preserves validation when an administrator edits a document', async () => {

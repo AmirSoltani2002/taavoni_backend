@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUserDocDto } from './dto/create-user-doc.dto';
 import { UpdateUserDocDto } from './dto/update-user-doc.dto';
 import { DatabaseService } from 'src/database/database.service';
@@ -41,17 +41,36 @@ export class UserDocService {
     })
   }
 
-  update(
+  async update(
     id: number,
     updateUserDocDto: UpdateUserDocDto,
-    invalidateValidation = false,
+    consumeInvestorEdit = false,
   ) {
     const { userId, ...rest } = updateUserDocDto;
+    if (consumeInvestorEdit) {
+      const result = await this.db.userDoc.updateMany({
+        where: {
+          id,
+          validation: false,
+          editedByInvestor: false,
+        },
+        data: {
+          ...rest,
+          validation: false,
+          editedByInvestor: true,
+        },
+      });
+      if (result.count !== 1) {
+        throw new ConflictException(
+          'ویرایش این مدرک تنها یک بار و قبل از تایید شدن آن امکان‌پذیر است.',
+        );
+      }
+      return this.findOne(id);
+    }
     return this.db.userDoc.update({
       where: { id },
       data: {
         ...rest,
-        ...(invalidateValidation ? { validation: false } : {}),
         user: userId ? { connect: { id: userId } } : undefined,
       },
     });
