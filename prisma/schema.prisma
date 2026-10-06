@@ -58,6 +58,7 @@ model userDoc {
   document String
   detail String?
   validation Boolean
+  editedByInvestor Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -1,4 +1,8 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+  ConflictException,
+  INestApplication,
+  ValidationPipe,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { APP_GUARD } from '@nestjs/core';
 import type { NextFunction, Request, Response } from 'express';
@@ -303,6 +307,34 @@ describe('User document API', () => {
       expect.stringMatching(uploadTestSuffix),
     );
     expect(updateCall[2]).toBe(true);
+  });
+
+  it('removes a rejected replacement upload and preserves the current file', async () => {
+    actor = { id: 7, type: 'free' };
+    const oldFilePath = path.join(uploadDirectory, downloadTestFile);
+    fs.writeFileSync(oldFilePath, 'old file');
+    userDocService.findOne.mockResolvedValue(
+      documentFor({ id: 7, type: 'free' }),
+    );
+    userDocService.update.mockRejectedValue(
+      new ConflictException('Investor edit is unavailable'),
+    );
+
+    await request(httpServer)
+      .patch('/user-doc/12')
+      .field('detail', 'عنوان جدید')
+      .attach('file', Buffer.from('replacement'), {
+        filename: `rejected${uploadTestSuffix}`,
+        contentType: 'text/plain',
+      })
+      .expect(409);
+
+    expect(fs.existsSync(oldFilePath)).toBe(true);
+    expect(
+      fs
+        .readdirSync(uploadDirectory)
+        .some((filename) => filename.endsWith(uploadTestSuffix)),
+    ).toBe(false);
   });
 
   it('rejects document ownership changes', async () => {
