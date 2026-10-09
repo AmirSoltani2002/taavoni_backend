@@ -7,6 +7,7 @@ import {
   Delete,
   Request,
   UnauthorizedException,
+  ForbiddenException,
   NotFoundException,
   Patch,
   UseInterceptors,
@@ -18,6 +19,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Public, Roles } from 'src/auth/roles.decorator';
 import { OtherTicketsService } from 'src/other-tickets/other-tickets.service';
 import { OtherChatsService } from 'src/other-chats/other-chats.service';
+
+const ADMIN_TYPES = new Set(['admin', 'system']);
 
 @Controller('users')
 export class UsersController {
@@ -119,11 +122,18 @@ export class UsersController {
   @Roles(['admin', 'system'])
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const {password, ..._rest} = updateUserDto;
-    if(password){
+    const { password, ..._rest } = updateUserDto;
+    if (password !== undefined) {
+      const targetUser = await this.usersService.findOne(+id);
+      if (!targetUser) throw new NotFoundException();
+      if (ADMIN_TYPES.has(targetUser.type ?? ''))
+        throw new ForbiddenException();
+    }
+    if (password) {
       updateUserDto.password = await PasswordService.hashPassword(password);
     }
-    return this.usersService.update(+id, updateUserDto);
+    const updatedUser = await this.usersService.update(+id, updateUserDto);
+    return { ...updatedUser, password: undefined };
   }
 
   @Roles(['system', 'admin'])
