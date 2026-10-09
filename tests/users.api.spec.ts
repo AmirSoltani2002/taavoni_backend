@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { OtherChatsService } from '../src/other-chats/other-chats.service';
 import { OtherTicketsService } from '../src/other-tickets/other-tickets.service';
+import { PasswordService } from '../src/auth/config';
 import { UsersController } from '../src/users/users.controller';
 import { UsersService } from '../src/users/users.service';
 
@@ -10,6 +11,7 @@ describe('Users API', () => {
   let app: INestApplication;
   let httpServer: Parameters<typeof request>[0];
   const usersService = {
+    findOne: jest.fn(),
     update: jest.fn(),
   };
 
@@ -38,6 +40,10 @@ describe('Users API', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   afterAll(async () => {
@@ -71,4 +77,43 @@ describe('Users API', () => {
 
     expect(usersService.update).not.toHaveBeenCalled();
   });
+
+  it('PATCH /users/:id accepts a password change for an investor target', async () => {
+    const hashPassword = jest
+      .spyOn(PasswordService, 'hashPassword')
+      .mockResolvedValue('hashed-password');
+    usersService.findOne.mockResolvedValue({ id: 7, type: 'free' });
+    usersService.update.mockResolvedValue({
+      id: 7,
+      type: 'free',
+      password: 'hashed-password',
+    });
+
+    await request(httpServer)
+      .patch('/users/7')
+      .send({ password: 'new-password' })
+      .expect(200)
+      .expect({ id: 7, type: 'free' });
+
+    expect(hashPassword).toHaveBeenCalledWith('new-password');
+    expect(usersService.update).toHaveBeenCalledWith(7, {
+      password: 'hashed-password',
+    });
+  });
+
+  it.each(['admin', 'system'])(
+    'PATCH /users/:id rejects password changes for a %s target',
+    async (targetType) => {
+      const hashPassword = jest.spyOn(PasswordService, 'hashPassword');
+      usersService.findOne.mockResolvedValue({ id: 7, type: targetType });
+
+      await request(httpServer)
+        .patch('/users/7')
+        .send({ password: 'new-password' })
+        .expect(403);
+
+      expect(hashPassword).not.toHaveBeenCalled();
+      expect(usersService.update).not.toHaveBeenCalled();
+    },
+  );
 });
