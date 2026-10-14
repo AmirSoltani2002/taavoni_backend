@@ -20,6 +20,7 @@ model userinfo {
   sex   SEX
   birthDay  DateTime?
   address String?
+  workAddress String?
   homePhone String?
   mobile String?
   workPhone String?

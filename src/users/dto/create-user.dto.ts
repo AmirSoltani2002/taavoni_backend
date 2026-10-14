@@ -18,6 +18,8 @@ import {
   IsOptional,
   IsBoolean,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { transformNullableString } from 'src/common/transform-nullable';
 
 export class CreateUserDto {
   @IsString()
@@ -32,15 +34,20 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   address?: string;
+  @IsString()
+  @IsOptional()
+  workAddress?: string;
   @IsPhoneNumber('IR')
   @IsOptional()
-  homePhone?: string;
+  @Transform(transformNullableString)
+  homePhone?: string | null;
   @IsPhoneNumber('IR')
   @IsOptional()
   mobile?: string;
   @IsPhoneNumber('IR')
   @IsOptional()
-  workPhone?: string;
+  @Transform(transformNullableString)
+  workPhone?: string | null;
   @IsEmail()
   @IsOptional()
   email?: string;
