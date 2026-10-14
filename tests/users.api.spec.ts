@@ -1,5 +1,6 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import type { NextFunction, Request, Response } from 'express';
 import request from 'supertest';
 import { OtherChatsService } from '../src/other-chats/other-chats.service';
 import { OtherTicketsService } from '../src/other-tickets/other-tickets.service';
@@ -11,6 +12,7 @@ describe('Users API', () => {
   let app: INestApplication;
   let httpServer: Parameters<typeof request>[0];
   const usersService = {
+    create: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
   };
@@ -26,6 +28,10 @@ describe('Users API', () => {
     }).compile();
 
     app = moduleRef.createNestApplication();
+    app.use((req: Request, _res: Response, next: NextFunction) => {
+      req['user'] = { id: 1, type: 'free' };
+      next();
+    });
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
@@ -65,6 +71,76 @@ describe('Users API', () => {
       .expect({ id: 7, ...body });
 
     expect(usersService.update).toHaveBeenCalledWith(7, body);
+  });
+
+  it.each([
+    { path: '/users/profile', userId: 1 },
+    { path: '/users/7', userId: 7 },
+  ])(
+    'PATCH $path accepts blank optional phones and a work address',
+    async ({ path, userId }) => {
+      const body = {
+        homePhone: '',
+        workPhone: '   ',
+        workAddress: 'تهران، خیابان کار',
+      };
+      usersService.update.mockResolvedValue({
+        id: userId,
+        homePhone: null,
+        workPhone: null,
+        workAddress: body.workAddress,
+      });
+
+      await request(httpServer).patch(path).send(body).expect(200);
+
+      expect(usersService.update).toHaveBeenCalledWith(userId, {
+        homePhone: null,
+        workPhone: null,
+        workAddress: body.workAddress,
+      });
+    },
+  );
+
+  it.each(['/users/profile', '/users/7'])(
+    'PATCH %s rejects an invalid non-empty phone number',
+    async (path) => {
+      await request(httpServer)
+        .patch(path)
+        .send({ homePhone: 'not-a-phone' })
+        .expect(400);
+
+      expect(usersService.update).not.toHaveBeenCalled();
+    },
+  );
+
+  it('POST /users allows signup without home and work phone numbers', async () => {
+    jest
+      .spyOn(PasswordService, 'hashPassword')
+      .mockResolvedValue('hashed-password');
+    usersService.create.mockResolvedValue({ id: 8 });
+
+    await request(httpServer)
+      .post('/users')
+      .send({
+        name: 'Test',
+        lastName: 'User',
+        sex: 'male',
+        nationalNumber: '0012345678',
+        password: 'safe-password',
+        homePhone: '',
+        workPhone: '',
+      })
+      .expect(201);
+
+    expect(usersService.create).toHaveBeenCalledWith({
+      name: 'Test',
+      lastName: 'User',
+      sex: 'male',
+      nationalNumber: '0012345678',
+      password: 'hashed-password',
+      homePhone: null,
+      workPhone: null,
+    });
   });
 
   it.each([
