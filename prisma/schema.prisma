@@ -19,6 +19,7 @@ model userinfo {
   lastName  String
   sex   SEX
   birthDay  DateTime?
+  identifier Int? @unique
   address String?
   workAddress String?
   homePhone String?

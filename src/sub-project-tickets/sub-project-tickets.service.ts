@@ -41,10 +41,18 @@ export class SubProjectTicketsService {
       return this.db.subProjectTicket.delete({ where: { id } });
     }
   
-    findOneChats(id: number) {
-      return this.db.subProjectTicket.findMany({ where: { id }, include: { chats: {orderBy: {createdAt: 'asc'}, include: {sender: true}} } });
-    }
-    
+  findOneChats(id: number) {
+    return this.db.subProjectTicket.findMany({
+      where: { id },
+      include: {
+        chats: {
+          orderBy: { createdAt: 'asc' },
+          include: { sender: { omit: { identifier: true } } },
+        },
+      },
+    });
+  }
+
     findAllUser(id: number, queryType?: string) {
       return this.db.subProjectTicket.findMany({
         where: { userId: id,
