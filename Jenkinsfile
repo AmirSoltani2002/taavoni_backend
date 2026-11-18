@@ -62,13 +62,22 @@ pipeline {
 
         stage('Build image') {
             steps {
-                sh '''
-                    set -eu
-                    docker build --pull \
-                      --label org.opencontainers.image.revision="$GIT_COMMIT" \
-                      --label org.opencontainers.image.source="$GIT_URL" \
-                      --tag "$IMAGE_REPOSITORY:$IMAGE_TAG" .
-                '''
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKERHUB_USERNAME',
+                    passwordVariable: 'DOCKERHUB_TOKEN'
+                )]) {
+                    sh '''
+                        set -eu
+                        trap 'docker logout >/dev/null 2>&1 || true' EXIT
+                        printf '%s' "$DOCKERHUB_TOKEN" |
+                          docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+                        docker build --pull \
+                          --label org.opencontainers.image.revision="$GIT_COMMIT" \
+                          --label org.opencontainers.image.source="$GIT_URL" \
+                          --tag "$IMAGE_REPOSITORY:$IMAGE_TAG" .
+                    '''
+                }
             }
         }
 
