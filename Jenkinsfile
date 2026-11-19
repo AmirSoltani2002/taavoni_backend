@@ -70,8 +70,16 @@ pipeline {
                     sh '''
                         set -eu
                         trap 'docker logout >/dev/null 2>&1 || true' EXIT
-                        printf '%s' "$DOCKERHUB_TOKEN" |
-                          docker login --username "$DOCKERHUB_USERNAME" --password-stdin
+                        attempt=1
+                        until printf '%s' "$DOCKERHUB_TOKEN" |
+                          docker login --username "$DOCKERHUB_USERNAME" --password-stdin; do
+                          if [ "$attempt" -ge 3 ]; then
+                            exit 1
+                          fi
+                          echo "Docker Hub login failed; retrying in 5 seconds ($attempt/3)" >&2
+                          sleep 5
+                          attempt=$((attempt + 1))
+                        done
                         docker build --pull \
                           --label org.opencontainers.image.revision="$GIT_COMMIT" \
                           --label org.opencontainers.image.source="$GIT_URL" \
