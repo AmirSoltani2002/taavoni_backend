@@ -42,7 +42,15 @@ export class OtherTicketsService {
   }
 
   findOneChats(id: number) {
-    return this.db.otherTicket.findMany({ where: { id }, include: { chats: {orderBy: { createdAt: 'asc' }, include: {sender: true} }}  });
+    return this.db.otherTicket.findMany({
+      where: { id },
+      include: {
+        chats: {
+          orderBy: { createdAt: 'asc' },
+          include: { sender: { omit: { identifier: true } } },
+        },
+      },
+    });
   }
   
   findAllUser(id: number | null, queryType?: string, open?: boolean) {
@@ -54,8 +62,8 @@ export class OtherTicketsService {
       },
       orderBy: { updatedAt: 'desc' },
       include: {
-        user: true,
-        reciever: true
+        user: { omit: { identifier: true } },
+        reciever: { omit: { identifier: true } },
       }
     });
   }

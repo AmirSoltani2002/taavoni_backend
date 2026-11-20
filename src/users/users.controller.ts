@@ -15,6 +15,7 @@ import {
 import { PasswordService } from 'src/auth/config';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { AdminCreateUserDto } from './dto/admin-create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Public, Roles } from 'src/auth/roles.decorator';
 import { OtherTicketsService } from 'src/other-tickets/other-tickets.service';
@@ -50,6 +51,13 @@ export class UsersController {
   }
 
   @Roles(['system', 'admin'])
+  @Post('admin')
+  async createByAdmin(@Body() createUserDto: AdminCreateUserDto) {
+    const user = await this.create(createUserDto);
+    return { ...user, password: undefined };
+  }
+
+  @Roles(['system', 'admin'])
   @Get()
   findAll() {
     return this.usersService.findAll();
@@ -73,7 +81,18 @@ export class UsersController {
   }
 
   @Patch('profile')
-  async updateProfile(@Body() updateUserDto: UpdateUserDto, @Request() req) {
+  async updateProfile(
+    @Body() updateUserDto: UpdateUserDto,
+    @Request() req: { user: { id: number; type: string } },
+  ) {
+    if (
+      updateUserDto.identifier !== undefined &&
+      !ADMIN_TYPES.has(req['user'].type)
+    ) {
+      throw new ForbiddenException(
+        'Only admin or system can change identifier',
+      );
+    }
     const {password, ..._rest} = updateUserDto;
     if((updateUserDto?.type && !['admin', 'system'].includes(req['user'].type) && ['admin', 'system'].includes(updateUserDto.type) ) || updateUserDto?.accepted !== undefined  ){
       throw new UnauthorizedException();
@@ -92,20 +111,32 @@ export class UsersController {
   }
 
   @Get('national/:nationalNumber')
-  async findOneByNationalNumber(@Param('nationalNumber') nationalNumber: string) {
+  async findOneByNationalNumber(
+    @Param('nationalNumber') nationalNumber: string,
+    @Request() req: { user: { id: number; type: string } },
+  ) {
     const user = await this.usersService.findOneByNationalNumber(nationalNumber);
     if(!user)
       throw new NotFoundException();
     const {password, ...rest} = user;
+    if (!ADMIN_TYPES.has(req['user'].type) && user.id !== req['user'].id) {
+      return { ...rest, identifier: undefined };
+    }
     return rest;
   }
 
   @Get('email/:email')
-  async findOneByEmail(@Param('email') email: string) {
+  async findOneByEmail(
+    @Param('email') email: string,
+    @Request() req: { user: { id: number; type: string } },
+  ) {
     const user = await this.usersService.findOneByEmail(email);
     if(!user)
       throw new NotFoundException();
     const {password, ...rest} = user;
+    if (!ADMIN_TYPES.has(req['user'].type) && user.id !== req['user'].id) {
+      return { ...rest, identifier: undefined };
+    }
     return rest;
   }
 
